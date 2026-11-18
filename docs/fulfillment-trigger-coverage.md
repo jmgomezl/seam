@@ -40,3 +40,19 @@ webhook signature handling, line-item handling, production exactly-once behavior
 durable storage or distributed coordination. Payment status represents a fake
 retrieved-session snapshot; do not copy it from untrusted redirect parameters.
 No Stripe or Firebase configuration is changed or used.
+
+## First-use presentation
+
+The replay cards now show the authored trigger and event identity, rather than
+rendering webhook and redirect requests as visually indistinguishable session/
+status pairs. The guided next action says “Compare webhook + redirect”; it does
+not imply that the previous same-event inputs are merely rescheduled unchanged.
+No result is displayed before running the checks.
+
+Browser verification on the local preview: ran the nine checks, followed the new
+CTA, observed distinct Webhook/Redirect labels and event/no-event identity, and
+verified the selected finding showed 2 versus 1 recorded effects with unchanged
+7/9 and 9/9 totals. Focus moved to the finding. Unit tests cover actual fixture
+identity, delayed-success labels, absent metadata and HTML escaping. Compact
+cards wrap long identifiers; a separate narrow-screen visual check is still
+recommended before deployment.
