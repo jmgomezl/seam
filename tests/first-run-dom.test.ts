@@ -73,7 +73,7 @@ test('guided hierarchy reveals actual counts only after execution and labels cur
  assert.doesNotMatch(host.html,/class="replay-count/);
  assert.doesNotMatch(host.html,/Actual effect ledgers/);
  assert.match(host.html,/aria-current="step"><b>1/);
- assert.match(host.html,/<summary>Advanced<\/summary>/);
+ assert.match(host.html,/<summary>More tools<\/summary>/);
  await host.querySelector('#replay-run')!.listeners.click();
  assert.match(host.html,/aria-current="step"><b>2/);
  assert.ok(host.html.indexOf('Actual effect ledgers')<host.html.indexOf('Selected schedule finding'));
