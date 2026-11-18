@@ -37,3 +37,15 @@ Pinned Stripe Link source and its MIT notice are retained in `src/vendor/link-cl
 ## Contributing and traceability
 
 Use descriptive commits, retain source notices, add regression tests for behavior changes, and run tests/typecheck/build. Do not commit credentials, private payloads, browser state, or deployment identifiers. Changes after this public import should remain traceable through commits and review.
+
+## Review brief
+
+Select a boundary and click **Compare both adapters** to execute both bundled revisions locally. The compact comparison and downloadable Markdown brief include fixed-fixture failures, expected/original/corrected values, scope and reproduction instructions. Custom inputs are excluded. Export the runnable test alongside the brief. Passing these checks is not deployment approval or production coverage.
+
+## Business hypotheses, not validated claims
+
+The proposed first customer is an engineering lead at a payment-heavy SaaS or integration agency who needs reproducible evidence when reviewing risky adapter changes. This prototype demonstrates currency-display and merge-patch boundaries, not payment processing or automatic repository analysis.
+
+The MIT local runner and exports remain free. A future paid team service could maintain rule versions, shared baselines and review/CI history; none of those managed capabilities is built. A $99/team/month starting price is an interview hypothesis, not an offer or established willingness to pay. First validation targets: five interviews, three permission-cleared real adapters, two repeat users on their next change and one paid pilot. Measure accepted-rule setup time, rejected findings and regression reuse before claiming savings.
+
+Existing tools already cover important parts of this workflow: [PactFlow](https://pactflow.io/pricing/) provides collaborative contract testing and [Schemathesis](https://schemathesis.io/) generates schema-based tests with custom checks. Seam's proposed focus is source-linked semantic rules and small, reviewable reproductions, not a claim that other tools cannot test semantics.

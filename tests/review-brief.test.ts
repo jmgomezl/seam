@@ -1,0 +1,6 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createReviewBrief,reviewMarkdown} from '../src/review-brief.ts';
+test('review executes both money revisions and counts only fixed probes',()=>{const b=createReviewBrief('money');assert.equal(b.originalPassed,11);assert.equal(b.correctedPassed,20);assert.equal(b.total,20);assert.equal(b.examples.length,9);assert.ok(b.examples.every(e=>e.corrected===e.expected));assert.match(b.limits,/not Stripe charge or payout/);});
+test('patch review preserves omitted versus null semantics',()=>{const b=createReviewBrief('patch');assert.equal(b.originalPassed,6);assert.equal(b.correctedPassed,8);assert.equal(b.examples.length,2);assert.ok(b.examples.every(e=>e.corrected===e.expected));assert.match(b.source,/Authored/);});
+test('review exports are deterministic, scoped and reproducible',()=>{for(const scenario of ['money','patch'] as const){const report=reviewMarkdown(createReviewBrief(scenario));assert.equal(report,reviewMarkdown(createReviewBrief(scenario)));assert.match(report,/Custom inputs are not included/);assert.match(report,/not a deployment approval/);assert.match(report,/\.test\.mjs --fixed/);assert.match(report,/No AI inference or live API calls/);}});
