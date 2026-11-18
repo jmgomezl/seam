@@ -16,3 +16,7 @@ The prior landing page required choosing among unrelated boundary examples befor
 ## Checks
 
 122 tests pass, production build and whitespace check pass. Two new tests cover no pre-execution claims, actual sequential→concurrent transition, and error handling without a claimed success. Chrome desktop observed not-executed initial state, sequential1/1, concurrent2/1, contextual next actions and completed JSON download. Screenshot inspection confirmed readable result/call-to-action/ledger hierarchy. Mobile visual checks not performed. No real fulfillment, customer adapter or AI inference used.
+
+## Peer-review fixes
+
+The first review blocked the new proposal navigation key and the schedule disclosure's redraw behavior. Both are fixed in a successor commit: proposal navigation uses the existing `proposals` route; schedule disclosure open state survives redraw before focus returns to the selected, visible control. Two DOM-double regression tests execute the actual replay event bindings and verify routing/open-state/focus. Chrome independently confirmed the five-call selection remains visible/focused and AI contract proposal opens the excerpt-entry screen (without running inference). Full suite now 124 passing; production build passes.
