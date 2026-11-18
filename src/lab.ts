@@ -31,9 +31,15 @@ const original = (()=>{${compiledAdapters.before};return formatAmount;})();
 const fixed = (()=>{${compiledAdapters.fixed};return formatAmount;})();
 export function checkAdapter(formatAmount){return executeProbes(formatAmount,probes);}
 if(process.argv[1] && existsSync(process.argv[1]) && import.meta.url===pathToFileURL(realpathSync(process.argv[1])).href){
- const args=process.argv.slice(2);let adapter=args.includes('--fixed')?fixed:original;
- const at=args.indexOf('--adapter');
- if(at>=0){if(!args[at+1])throw new Error('Supply an adapter module path');const m=await import(pathToFileURL(resolve(args[at+1])).href);adapter=m.formatAmount??m.default;if(typeof adapter!=='function')throw new Error('Export formatAmount or a default function');}
+ const args=process.argv.slice(2);
+ const external=args.length===2&&args[0]==='--adapter'&&args[1].trim()!==''&&!args[1].startsWith('--');
+ if(!(args.length===0||(args.length===1&&args[0]==='--fixed')||external)){
+  console.error('Usage: node <downloaded-test.mjs> [--fixed | --adapter ./trusted-adapter.mjs]');
+  process.exit(2);
+ }
+ let adapter=args[0]==='--fixed'?fixed:original;
+ if(external){const m=await import(pathToFileURL(resolve(args[1])).href);adapter=m.formatAmount??m.default;if(typeof adapter!=='function')throw new Error('Export formatAmount or a default function');}
+ console.log('Mode: '+(external?'external adapter':args[0]==='--fixed'?'bundled correction':'bundled original'));
  const results=checkAdapter(adapter);for(const r of results)console.log((r.passed?'PASS':'FAIL')+' '+r.id+' expected='+r.expected+' observed='+r.observed+' output='+JSON.stringify(r.output)+(r.error?' error='+r.error:''));
  console.log(results.filter(r=>r.passed).length+'/'+results.length+' numeric contract checks passed');
  process.exitCode=results.some(r=>!r.passed)?1:0;
