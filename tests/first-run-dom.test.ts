@@ -5,9 +5,9 @@ import {replayView} from '../src/replay-ui.ts';
 // Minimal deterministic DOM double: exercises replayView's real event bindings/redraw.
 class NodeDouble {
  dataset:Record<string,string>={}; open=false; onclick:(()=>void)|null=null;
- listeners:Record<string,()=>unknown>={}; focused=false; pressed=false;
+ listeners:Record<string,()=>unknown>={}; focused=false; pressed=false; preventScroll:boolean|undefined;
  addEventListener(name:string,fn:()=>unknown){this.listeners[name]=fn;}
- focus(){this.focused=true;}
+ focus(options?:{preventScroll?:boolean}){this.focused=true;this.preventScroll=options?.preventScroll;}
  setAttribute(){}
 }
 class HostDouble {
@@ -21,7 +21,7 @@ class HostDouble {
    const c=attrs.match(/data-replay-case="([^"]+)"/);if(c){node.dataset.replayCase=c[1];node.pressed=attrs.includes('aria-pressed="true"');this.cases.push(node);}
   }
   const details=html.match(/<details class="first-run-all"([^>]*)>/);if(details){const n=new NodeDouble();n.open=/\bopen\b/.test(details[1]);this.nodes.set('.first-run-all',n);}
-  this.nodes.set('a.lab-brand',new NodeDouble());
+  for(const id of ['replay-results','replay-status']){if(html.includes(`id="${id}"`))this.nodes.set('#'+id,new NodeDouble());}this.nodes.set('a.lab-brand',new NodeDouble());
  }
  querySelector(selector:string){if(selector==='[data-replay-case][aria-pressed="true"]')return this.cases.find(n=>n.pressed);return this.nodes.get(selector)??null;}
  querySelectorAll(selector:string){if(selector==='[data-nav]')return this.nav;if(selector==='[data-replay-case]')return this.cases;return [];}
@@ -76,10 +76,21 @@ test('guided hierarchy reveals actual counts only after execution and labels cur
  assert.match(host.html,/<summary>More tools<\/summary>/);
  await host.querySelector('#replay-run')!.listeners.click();
  assert.match(host.html,/aria-current="step"><b>2/);
- assert.ok(host.html.indexOf('Actual effect ledgers')<host.html.indexOf('Selected schedule finding'));
+ assert.ok(host.html.indexOf('actual effect ledgers')>=0);assert.ok(host.html.indexOf('actual effect ledgers')<host.html.indexOf('Selected schedule finding'));
  host.querySelector('#first-run-next')!.listeners.click();
  assert.match(host.html,/aria-current="step"><b>3/);
  assert.match(host.html,/<strong>2<\/strong><span>fulfillment records/);
  assert.match(host.html,/<strong>1<\/strong><span>fulfillment records/);
  assert.match(host.html,/Inspect recorded order IDs/);
+}));
+
+ test('guided completed run and overlap reveal actual ledgers with schedule context',()=>fixture(async host=>{
+ assert.equal(host.querySelector('#replay-results'),null);
+ await host.querySelector('#replay-run')!.listeners.click();
+ assert.equal(host.querySelector('#replay-results')!.focused,true);
+ assert.equal(host.querySelector('#replay-results')!.preventScroll,false);
+ assert.match(host.html,/tabindex="-1" aria-label="[^"]+: actual effect ledgers"/);
+ host.querySelector('#first-run-next')!.listeners.click();
+ assert.equal(host.querySelector('#replay-results')!.focused,true);
+ assert.equal(host.querySelector('#replay-results')!.preventScroll,false);
 }));
