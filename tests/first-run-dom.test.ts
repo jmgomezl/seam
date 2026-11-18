@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {replayView} from '../src/replay-ui.ts';
+import {replayView,documentationStoryEntry} from '../src/replay-ui.ts';
 // Minimal deterministic DOM double: exercises replayView's real event bindings/redraw.
 class NodeDouble {
  dataset:Record<string,string>={}; open=false; onclick:(()=>void)|null=null;
@@ -138,7 +138,13 @@ test('rerun keeps running feedback visible and labels retained results as previo
 }));
 
 test('guided entry makes the documentation-to-regression story discoverable without claiming inference',()=>fixture((host,routes)=>{
- assert.match(host.html,/Documentation → reviewed rule → runnable test/);
- assert.match(host.html,/Extraction requires configured inference/);
+ assert.match(host.html,/Preview AI workflow · setup needed/);
+ assert.match(host.html,/AI extraction is not configured/);
  host.nav.find(n=>n.dataset.nav==='proposals')!.onclick!();assert.deepEqual(routes,['proposals']);
 }));
+
+test('documentation entry distinguishes configured availability from setup preview',()=>{
+ assert.match(documentationStoryEntry(false),/Preview AI workflow · setup needed/);
+ assert.match(documentationStoryEntry(true),/Documentation → reviewed rule → runnable test/);
+ assert.match(documentationStoryEntry(true),/runtime success is not assumed/);
+});
