@@ -136,3 +136,9 @@ test('rerun keeps running feedback visible and labels retained results as previo
  assert.doesNotMatch(host.html,/Results below are from the previous completed run/);
  assert.match(host.html,/All nine schedules:/);
 }));
+
+test('guided entry makes the documentation-to-regression story discoverable without claiming inference',()=>fixture((host,routes)=>{
+ assert.match(host.html,/Documentation → reviewed rule → runnable test/);
+ assert.match(host.html,/Extraction requires configured inference/);
+ host.nav.find(n=>n.dataset.nav==='proposals')!.onclick!();assert.deepEqual(routes,['proposals']);
+}));

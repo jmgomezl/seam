@@ -11,3 +11,5 @@ Actual bundled JPY results: original 1/4, historical correction 4/4. At input 10
 Own-code exports remain separately gated by scope confirmation. No customer code executes in the browser and no application changes are applied.
 
 Verification: 184 tests, TypeScript and production build pass; exported four-case regression independently executed (original exit1, correction exit0). UI event tests use explicitly test-only mocked inference; they are not evidence of live AI. Real browser initial-state QA requested; live AI and post-inference browser QA remain blocked pending Firebase setup.
+
+Discoverability followup: the working local-demo introduction includes a direct documentation-to-regression entry with explicit inference prerequisite. This avoids burying the new story behind supporting tools while retaining a working non-AI landing flow. 185 tests/build pass.
