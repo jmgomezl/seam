@@ -1,0 +1,6 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {compareFulfillment} from '../src/replay-ui.ts';
+import {replaySheet} from '../src/replay-sheet.ts';
+test('portable sheet contains actual ledgers and honestly scoped witness',async()=>{const run=await compareFulfillment();const html=replaySheet(run);assert.match(html,/overlap<strong>2<\/strong>/);assert.match(html,/Reference overlap<strong>1<\/strong>/);assert.equal((html.match(/<th scope="row">/g)||[]).length,9);assert.match(html,/not a signed attestation/);assert.match(html,/No live Stripe API/);assert.match(html,/default-src 'none'/);assert.doesNotMatch(html,/<script|<img|<iframe/i);});
+test('sheet escapes ledger data and marks absent or incomplete outcomes',async()=>{const run=await compareFulfillment();run.original[0].id='<script>alert(1)</script>';run.original[0].actual=['<img src=x onerror=alert(1)>'];run.original.find(r=>r.id==='concurrent-same-session')!.error='failed';run.reference=[];const html=replaySheet(run);assert.doesNotMatch(html,/<script|<img/i);assert.match(html,/&lt;script&gt;/);assert.match(html,/&lt;img/);assert.match(html,/Missing/);assert.match(html,/overlap<strong>Incomplete/);});
