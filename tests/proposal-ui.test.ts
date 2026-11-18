@@ -12,7 +12,7 @@ class Root {
  get innerHTML(){return this.html;}
  querySelector(id:string){return this.nodes.get(id)??null;}
 }
-async function viewFactory(){const bundled=await build({entryPoints:[new URL('../src/proposal-ui.ts',import.meta.url).pathname],bundle:true,write:false,format:'esm',platform:'node',plugins:[{name:'test-only-sdk',setup(b){b.onResolve({filter:/\/firebase\.ts$/},()=>({path:'sdk',namespace:'test'}));b.onLoad({filter:/.*/,namespace:'test'},()=>({contents:'export const firebaseConfigured=()=>true; export const inferText=(...args)=>globalThis.__seamTestTransport(...args);',loader:'js'}));}}]});return (await import('data:text/javascript;base64,'+Buffer.from(bundled.outputFiles[0].text).toString('base64'))).proposalView as (root:Root,onManual?:()=>void)=>void;}
+async function viewFactory(configured=true){const bundled=await build({entryPoints:[new URL('../src/proposal-ui.ts',import.meta.url).pathname],bundle:true,write:false,format:'esm',platform:'node',plugins:[{name:'test-only-sdk',setup(b){b.onResolve({filter:/\/firebase\.ts$/},()=>({path:'sdk',namespace:'test'}));b.onLoad({filter:/.*/,namespace:'test'},()=>({contents:'export const firebaseConfigured=()=>'+configured+'; export const inferText=(...args)=>globalThis.__seamTestTransport(...args);',loader:'js'}));}}]});return (await import('data:text/javascript;base64,'+Buffer.from(bundled.outputFiles[0].text).toString('base64'))).proposalView as (root:Root,onManual?:()=>void)=>void;}
 function prepare(root:Root){root.querySelector('#proposal-producer')!.value='Public synthetic USD cents: 100 units per dollar.';root.querySelector('#proposal-consumer')!.value='Public synthetic USD dollars: 1 unit per dollar.';root.querySelector('#proposal-route')!.value='local';root.querySelector('#proposal-public')!.checked=true;root.querySelector('#proposal-consent')!.checked=true;}
 test('pending SDK rejection cannot touch a detached, cleared or replaced proposal view',async()=>{
  const view=await viewFactory();
@@ -69,4 +69,13 @@ test('manual fallback before any extraction needs no model consent or request',a
  const view=await viewFactory();let calls=0,manual=0;(globalThis as any).__seamTestTransport=()=>{calls++;throw new Error('Unexpected inference');};
  const root=new Root();view(root,()=>{manual++;});root.querySelector('#proposal-manual')!.onclick!();
  assert.equal(manual,1);assert.equal(calls,0);delete (globalThis as any).__seamTestTransport;
+});
+
+test('unconfigured workflow announces preview before excerpts and keeps extraction disabled',async()=>{
+ const view=await viewFactory(false),root=new Root();view(root);
+ assert.match(root.html,/PREVIEW · AI NOT AVAILABLE/);
+ assert.ok(root.html.indexOf('PREVIEW · AI NOT AVAILABLE')<root.html.indexOf('id="proposal-producer"'));
+ assert.match(root.html,/reviewed-code steps cannot run yet/);
+ assert.equal(root.querySelector('#proposal-run')!.disabled,true);
+ assert.doesNotMatch(root.html,/id="proposal-demo-run"/);
 });

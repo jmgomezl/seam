@@ -22,6 +22,8 @@ test('candidate review has no preselected answer; mismatch, edits and reject can
  node('proposal-scope').checked=true;node('proposal-producer-scale').value='1';node('proposal-producer-currency').value='USD';node('proposal-consumer-scale').value='1';node('proposal-consumer-currency').value='USD';
  await node('proposal-witness').onclick!();assert.match(node('proposal-status').textContent,/differs/);assert.equal(node('proposal-witnesses').innerHTML,'');
  node('proposal-producer-scale').value='100';await node('proposal-witness').onclick!();assert.match(node('proposal-witnesses').innerHTML,/not production execution/);
+ assert.match(node('proposal-witnesses').innerHTML,/AI source: on_device/);
+ await node('proposal-demo-run').onclick!();assert.match(node('proposal-demo-result').innerHTML,/EXECUTED BUNDLED CODE · NOT YOUR INTEGRATION/);assert.match(node('proposal-demo-result').innerHTML,/4\/4/);assert.ok(node('proposal-regression').onclick);
  node('proposal-consumer-currency').value='EUR';node('proposal-consumer-currency').listeners.get('input')!();assert.equal(node('proposal-witnesses').innerHTML,'');
  await node('proposal-reject').onclick!();assert.equal(node('proposal-result').innerHTML,'');assert.match(node('proposal-status').textContent,/Candidate rejected/);
 });
