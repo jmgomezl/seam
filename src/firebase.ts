@@ -3,7 +3,7 @@ import {gate,parseHypotheses,type Route} from './privacy.ts';
 import {promptFor,type Boundary} from './engine.ts';
 export function firebaseConfigured(){return missingFirebaseFields(import.meta.env).length===0;}
 let initialized:Promise<import('firebase/app').FirebaseApp>|undefined;
-export async function review(c:Boundary,route:Route,consent:boolean,cloudConsent:boolean){
+export async function inferText(prompt:string,route:Route,consent:boolean,cloudConsent:boolean){
  gate(route,consent,cloudConsent);
  const e=import.meta.env;
  assertRuntimeConfigured(e,route);
@@ -12,8 +12,10 @@ export async function review(c:Boundary,route:Route,consent:boolean,cloudConsent
  // Strict modes prevent payload fallback; inferenceSource below is only a post-request check.
  const model=getGenerativeModel(getAI(app,{backend:new GoogleAIBackend()}),{mode:route==='local'?InferenceMode.ONLY_ON_DEVICE:InferenceMode.ONLY_IN_CLOUD,...(e.VITE_FIREBASE_MODEL?{inCloudParams:{model:e.VITE_FIREBASE_MODEL}}:{})});
  if(route==='local')await model.initializeDeviceModel();
- const result=await model.generateContent(promptFor(c));
+ const result=await model.generateContent(prompt);
  const expectedSource=route==='local'?InferenceSource.ON_DEVICE:InferenceSource.IN_CLOUD;
  if(result.response.inferenceSource!==expectedSource)throw new Error('Unexpected inference route; response rejected.');
- return {source:result.response.inferenceSource,hypotheses:parseHypotheses(result.response.text(),c.id)};
+ return {source:result.response.inferenceSource,text:result.response.text()};
 }
+
+export async function review(c:Boundary,route:Route,consent:boolean,cloudConsent:boolean){const result=await inferText(promptFor(c),route,consent,cloudConsent);return {source:result.source,hypotheses:parseHypotheses(result.text,c.id)};}
