@@ -12,3 +12,5 @@ The actual private source checkpoints below remain preserved privately. Their co
 | `d34d98ef8b8236f18e952c1edc7580c6eefad892` | Visual semantic lab009, authored missing/null example |
 
 All four private checkpoints were recorded on 2026-11-17 with the generic message `Update Site source`. They are milestone snapshots, not a granular record of every earlier edit. Public commits from this import onward record new changes directly. Source/test behavior was retained; internal deployment configuration was excluded and documentation/log paths sanitized.
+
+Before first publication, review found a tracked dependency symlink in the two local preparation commits. It was removed from both unpublished commit trees, preserving their real author/date metadata; their preparation hashes consequently changed. The original private Site history was not rewritten. No source had been published. Only the sanitized `main` history is intended for transfer.
