@@ -55,3 +55,21 @@ In a disposable test branch, temporarily drop a fulfillment effect and verify a 
 The report hashes only the entry adapter and replay module. An imported business module can change while the adapter hash stays identical. Hashes are not proof of dependency identity, authorship, integrity or actual execution. Preserve the application commit separately in your own review process; Seam does not inspect or attest your repository.
 
 Real concurrency and crash safety still need your database/transaction integration tests, multiple-process tests, restart tests and failure injection. The local runner does not implement durable exactly-once effects. Adoption and time-saving benefits remain unmeasured.
+
+### A handler that never finishes
+
+Each fixture waits at most 5 seconds for asynchronous handler work. A waiting
+limit produces a failing `timed-out` result; remaining fixtures are marked
+`not-run`, not presented as executed failures or successes. The optional metadata
+report preserves those statuses without adapter error text. A late completion
+cannot change the returned evidence, and no later batches/fixtures are started.
+The default racy and reference fixtures still have their original 7/9 and 9/9
+outcomes.
+
+This stops waiting, **not your code**. It cannot cancel your network calls, undo
+side effects, interrupt CPU-blocking JavaScript, bound module import, or close
+resources your adapter leaves open. Use fake effects and trusted code; apply your
+CI's external process timeout as a separate safeguard. The programmatic runner
+accepts `{timeoutMs}` from 1 to 60,000 ms for controlled local tests; the CLI uses
+5,000 ms. Synchronous throws are also collected alongside started sibling calls
+before reporting, unless the waiting limit is reached.

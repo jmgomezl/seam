@@ -40,24 +40,37 @@ export const singleProcessHandler:HandlerFactory=({recordFulfillment,checkpoint}
   try{await task;}finally{pending.delete(request.sessionId);}
  };
 };
-export type FulfillmentResult={id:string;expected:string[];actual:string[];passed:boolean;error?:string};
+export type FulfillmentResult={id:string;expected:string[];actual:string[];passed:boolean;error?:string;executionStatus?:'completed'|'timed-out'|'not-run'};
 /** Each fixture has fresh state; calls in one batch overlap at an await boundary. */
-export async function runFulfillmentReplay(factory:HandlerFactory):Promise<FulfillmentResult[]>{
+export async function runFulfillmentReplay(factory:HandlerFactory,options:{timeoutMs?:number}={}):Promise<FulfillmentResult[]>{
+ const timeoutMs=options.timeoutMs??5000;
+ if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000)throw new Error('Replay timeout must be an integer from 1 to 60000 ms.');
  const results:FulfillmentResult[]=[];
+ let stopped=false;
  for(const fixture of fulfillmentCases()){
+  if(stopped){results.push({id:fixture.id,expected:fixture.expected,actual:[],passed:false,executionStatus:'not-run',error:'Not run after an earlier asynchronous timeout.'});continue;}
   const actual:string[]=[];
+  let recording=true,timer:ReturnType<typeof setTimeout>|undefined;
+  const timeout=new Error(`Handler did not settle within ${timeoutMs} ms. Waiting stopped; adapter work was not canceled.`);
   try{
-   const handler=factory({recordFulfillment:id=>{if(typeof id!=='string')throw new Error('Fulfillment identifier must be a string.');actual.push(id);},checkpoint:()=>Promise.resolve()});
-   if(typeof handler!=='function')throw new Error('createHandler must return a function.');
-   for(const batch of fixture.batches){
-    // All settle before reading the ledger, including failures. No real side effects.
-    const settled=await Promise.allSettled(batch.map(request=>handler(structuredClone(request))));
-    const rejection=settled.find(r=>r.status==='rejected');
-    if(rejection?.status==='rejected')throw rejection.reason;
-   }
+   const execute=async()=>{
+    const handler=factory({recordFulfillment:id=>{if(typeof id!=='string')throw new Error('Fulfillment identifier must be a string.');if(recording)actual.push(id);},checkpoint:()=>Promise.resolve()});
+    if(typeof handler!=='function')throw new Error('createHandler must return a function.');
+    for(const batch of fixture.batches){
+     // Wrap synchronous throws too, so all started siblings settle before normal reporting.
+     const settled=await Promise.allSettled(batch.map(request=>Promise.resolve().then(()=>handler(structuredClone(request)))));
+     if(!recording)return; // Do not start another batch after the waiting limit.
+     const rejection=settled.find(r=>r.status==='rejected');
+     if(rejection?.status==='rejected')throw rejection.reason;
+    }
+   };
+   await Promise.race([execute(),new Promise<never>((_,reject)=>{timer=setTimeout(()=>reject(timeout),timeoutMs);})]);
    const expected=[...fixture.expected].sort(),observed=[...actual].sort();
-   results.push({id:fixture.id,expected:fixture.expected,actual,passed:JSON.stringify(expected)===JSON.stringify(observed)});
-  }catch(error){results.push({id:fixture.id,expected:fixture.expected,actual,passed:false,error:error instanceof Error?error.message:String(error)});}
+   results.push({id:fixture.id,expected:fixture.expected,actual:[...actual],passed:JSON.stringify(expected)===JSON.stringify(observed)});
+  }catch(error){
+   stopped=error===timeout;
+   results.push({id:fixture.id,expected:fixture.expected,actual:[...actual],passed:false,...(stopped?{executionStatus:'timed-out' as const}:{}),error:error instanceof Error?error.message:String(error)});
+  }finally{recording=false;if(timer!==undefined)clearTimeout(timer);}
  }
  return results;
 }

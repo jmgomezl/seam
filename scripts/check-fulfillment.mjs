@@ -20,6 +20,8 @@ Adapter contract: createHandler({recordFulfillment, checkpoint}) returns an asyn
 handler({sessionId, paymentStatus}). Inject fake storage/effects; await all work.
 Imports execute your code with local permissions. This is not a sandbox.
 Never connect production shipping, payments, customer records or credentials.
+Each fixture waits up to 5 seconds; a timeout stops later fixtures, not adapter work.
+CPU blocking, module imports and open resources need an external process timeout.
 Reports omit ledger/error text; console output is not redacted.
 Digests are byte identities, not proof of execution or dependency integrity.
 Read docs/local-handler-quickstart.md before adapting real code.`);
