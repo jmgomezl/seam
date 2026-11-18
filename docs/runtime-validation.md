@@ -54,8 +54,22 @@ inference. Chrome also documents `responseConstraint` on `prompt()`.
 - https://firebase.google.com/docs/ai-logic/hybrid/web/generate-structured-output
 - https://developer.chrome.com/docs/ai/prompt-api
 
-This parser-only change does not enable structured SDK generation, change routes,
-or claim a tested Firebase/App Check response. A schema must be wired separately
-for each supported route and tested on the actual runtime; runtime capability
-must not be inferred from a model version name. Schema-constrained output would
-still require exact-source validation and human semantic confirmation.
+The parser hardening itself did not enable structured SDK generation. The subsequent
+structured-proposal change now requests a schema only for the proposal flow:
+local requests set `onDeviceParams.promptOptions.responseConstraint`; explicitly
+consented cloud requests set `inCloudParams.generationConfig.responseMimeType`
+and `responseSchema`. Only the selected strict route receives configuration.
+The legacy boundary-review format is unchanged. SDK imports and schema setup
+remain after consent and configuration checks. Schema errors fail closed without
+retrying unconstrained or falling back to another route.
+
+The schema includes candidate/abstain status and nullable side declarations, so
+missing evidence can still abstain. Supported scale values, exact quotes, source
+binding and human semantic confirmation are application checks, not guarantees
+from the schema. A schema-shaped response can still be factually wrong.
+
+Verification: actual adapter bundled with test-only Firebase stubs, real installed
+SDK Schema helper construction, strict typecheck, and regression suite. No live
+Firebase/App Check or schema-constrained model response is claimed. Actual runtime
+compatibility remains to be tested after authorized project configuration; no
+model version is inferred from these tests.
