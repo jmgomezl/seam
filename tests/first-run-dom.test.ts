@@ -56,7 +56,7 @@ test('completed demo hands off to the existing scoped local lab and home stays r
  await host.querySelector('#replay-run')!.listeners.click();
  assert.match(host.html,/Next step for your code/);
  assert.match(host.html,/bundled examples, not your integration/);
- assert.match(host.html,/trusted local formatter or JSON-patch adapter/);
+ assert.match(host.html,/trusted local formatter or JSON Merge Patch \(RFC 7396\) adapter/);
  const local=host.nav.filter(n=>n.dataset.nav==='lab').at(-1)!;local.onclick!();
  const home=host.nav.find(n=>n.dataset.nav==='start')!;home.onclick!();
  assert.deepEqual(routes,['lab','start']);
