@@ -77,3 +77,7 @@ A digest identifies bytes read, **not authorship, integrity, execution proof or 
 ## First-run evidence story
 
 A fresh page now starts with one concrete developer-review question: can repeated fulfillment calls record the same order twice? Click to run the nine authored local schedules, inspect the passing sequential retry, then reveal the concurrent result from that same completed run and save its actual evidence. No inference runs automatically. The guide is explicitly labeled local/non-AI. All examples, AI proposal and runtime readiness remain reachable separately; the proposal's consent workflow is unchanged.
+
+### Local handler onboarding
+
+Run `node --experimental-strip-types scripts/check-fulfillment.mjs --help` or follow [the local handler quickstart](docs/local-handler-quickstart.md). It explains how to inject fake storage/effects into your actual decision logic, run the CLI/report, interpret exit codes and use a negative control. An existing report now produces actionable guidance without overwriting it; the message explicitly notes that the replay already ran.
