@@ -54,6 +54,8 @@ test('first read names the user, rule and scope without an executed finding',()=
 
 test('completed demo offers fulfillment-specific handoff with separate other-checks navigation',()=>fixture(async(host,routes)=>{
  await host.querySelector('#replay-run')!.listeners.click();
+ assert.doesNotMatch(host.html,/Next step for your fulfillment handler/);
+ host.querySelector('#first-run-next')!.listeners.click();
  assert.match(host.html,/Next step for your fulfillment handler/);
  assert.match(host.html,/bundled examples, not your integration/);
  assert.match(host.html,/Test my fulfillment handler locally/);
@@ -65,4 +67,19 @@ test('completed demo offers fulfillment-specific handoff with separate other-che
  const local=host.nav.filter(n=>n.dataset.nav==='lab').at(-1)!;local.onclick!();
  const home=host.nav.find(n=>n.dataset.nav==='start')!;home.onclick!();
  assert.deepEqual(routes,['lab','start']);
+}));
+
+test('guided hierarchy reveals actual counts only after execution and labels current step',()=>fixture(async host=>{
+ assert.doesNotMatch(host.html,/class="replay-count/);
+ assert.doesNotMatch(host.html,/Actual effect ledgers/);
+ assert.match(host.html,/aria-current="step"><b>1/);
+ assert.match(host.html,/<summary>Advanced<\/summary>/);
+ await host.querySelector('#replay-run')!.listeners.click();
+ assert.match(host.html,/aria-current="step"><b>2/);
+ assert.ok(host.html.indexOf('Actual effect ledgers')<host.html.indexOf('Selected schedule finding'));
+ host.querySelector('#first-run-next')!.listeners.click();
+ assert.match(host.html,/aria-current="step"><b>3/);
+ assert.match(host.html,/<strong>2<\/strong><span>fulfillment records/);
+ assert.match(host.html,/<strong>1<\/strong><span>fulfillment records/);
+ assert.match(host.html,/Inspect recorded order IDs/);
 }));
