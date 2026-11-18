@@ -60,8 +60,15 @@ const canonical=${canonicalJson.toString()};
 const execute=${executePatchProbes.toString()};
 export function checkSerializer(serializer){return execute(serializer,probes,merge,canonical);}
 if(process.argv[1]&&existsSync(process.argv[1])&&import.meta.url===pathToFileURL(realpathSync(process.argv[1])).href){
- const args=process.argv.slice(2);let adapter=args.includes('--fixed')?fixed:broken;const at=args.indexOf('--adapter');
- if(at>=0){if(!args[at+1])throw new Error('Supply an adapter module path');const m=await import(pathToFileURL(resolve(args[at+1])).href);adapter=m.serializePatch??m.default;if(typeof adapter!=='function')throw new Error('Export serializePatch or a default function');}
+ const args=process.argv.slice(2);
+ const external=args.length===2&&args[0]==='--adapter'&&args[1].trim()!==''&&!args[1].startsWith('--');
+ if(!(args.length===0||(args.length===1&&args[0]==='--fixed')||external)){
+  console.error('Usage: node <downloaded-test.mjs> [--fixed | --adapter ./trusted-adapter.mjs]');
+  process.exit(2);
+ }
+ let adapter=args[0]==='--fixed'?fixed:broken;
+ if(external){const m=await import(pathToFileURL(resolve(args[1])).href);adapter=m.serializePatch??m.default;if(typeof adapter!=='function')throw new Error('Export serializePatch or a default function');}
+ console.log('Mode: '+(external?'external adapter':args[0]==='--fixed'?'bundled correction':'bundled original'));
  const results=checkSerializer(adapter);for(const r of results)console.log((r.passed?'PASS':'FAIL')+' '+r.id+' wire='+r.wire+' expected='+JSON.stringify(r.expected)+' actual='+JSON.stringify(r.actual)+(r.error?' error='+r.error:''));
  console.log(results.filter(r=>r.passed).length+'/'+results.length+' state checks passed');process.exitCode=results.some(r=>!r.passed)?1:0;
 }
