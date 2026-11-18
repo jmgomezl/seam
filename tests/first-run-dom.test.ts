@@ -105,7 +105,7 @@ test('guided path keeps next action ahead of optional tools and review downloads
  assert.doesNotMatch(first,/<details class="replay-input-review"/);
  host.cases.find(n=>n.dataset.replayCase==='sequential-redelivery')!.onclick!();
  await host.querySelector('#replay-run')!.listeners.click();
- assert.match(host.html,/<details class="replay-input-review"><summary>Review requests &amp; rerun/);
+ assert.match(host.html,/<details class="replay-input-review" ><summary>Review requests &amp; rerun/);
  assert.match(host.html,/id="first-run-next" class="primary"/);
  host.querySelector('#first-run-next')!.listeners.click();
  assert.ok(host.html.indexOf('Next step for your fulfillment handler')<host.html.indexOf('Explore all nine schedules'));
@@ -122,4 +122,17 @@ test('default demo shows the actual concurrent finding and local handoff in one 
  assert.match(host.html,/<strong>2<\/strong><span>fulfillment records/);
  assert.match(host.html,/Test my fulfillment handler locally/);
  assert.equal(host.querySelector('#first-run-next'),null);
+}));
+
+test('rerun keeps running feedback visible and labels retained results as previous',()=>fixture(async host=>{
+ const first=host.querySelector('#replay-run')!.listeners.click();
+ assert.match(host.html,/Running local replay… No result yet/);
+ await first;
+ const again=host.querySelector('#replay-run')!.listeners.click();
+ assert.match(host.html,/<details class="replay-input-review" open>/);
+ assert.match(host.html,/Results below are from the previous completed run/);
+ assert.match(host.html,/id="replay-run"[^>]*disabled/);
+ await again;
+ assert.doesNotMatch(host.html,/Results below are from the previous completed run/);
+ assert.match(host.html,/All nine schedules:/);
 }));

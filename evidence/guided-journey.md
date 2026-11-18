@@ -10,3 +10,7 @@ Changes:
 - Safety and scope remain explicit in the result and local handoff. No adapter execution, generated patch acceptance, or external action has been automated.
 
 Validation: 181 tests pass; TypeScript and production build pass; diff whitespace checks pass. Added event-driven default-run and guided hierarchy tests, retained optional sequential comparison and focus tests. Real browser QA requested; not yet recorded here.
+
+## Rerun feedback followup
+
+Independent review identified that rerun redraw hid its running button while retaining old results. The request disclosure now stays open while busy, and the outside status labels retained results as belonging to the previous completed run. Initial running status says no result yet. No new focus/scroll or execution behavior added. An event-driven test observes both pending states before awaiting completion. 182 tests, production build and diff checks pass.
