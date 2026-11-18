@@ -1,4 +1,4 @@
-import {proposalResponseSchema} from './proposal-schema.ts';
+import {proposalResponseSchema,localProposalResponseSchema} from './proposal-schema.ts';
 import {missingFirebaseFields,assertRuntimeConfigured} from './runtime-readiness.ts';
 import {gate,parseHypotheses,type Route} from './privacy.ts';
 import {promptFor,type Boundary} from './engine.ts';
@@ -12,7 +12,7 @@ export async function inferText(prompt:string,route:Route,consent:boolean,cloudC
  const app=await initialized;const {getAI,getGenerativeModel,GoogleAIBackend,InferenceMode,InferenceSource,Schema}=await import('firebase/ai');
  // Strict modes prevent payload fallback; inferenceSource below is only a post-request check.
  const schema=format==='proposal'?proposalResponseSchema(Schema):undefined;
- const model=getGenerativeModel(getAI(app,{backend:new GoogleAIBackend()}),{mode:route==='local'?InferenceMode.ONLY_ON_DEVICE:InferenceMode.ONLY_IN_CLOUD,...(route==='local'?{...(schema?{onDeviceParams:{promptOptions:{responseConstraint:schema}}}:{})}:{inCloudParams:{model:e.VITE_FIREBASE_MODEL,...(schema?{generationConfig:{responseMimeType:'application/json',responseSchema:schema}}:{})}})});
+ const model=getGenerativeModel(getAI(app,{backend:new GoogleAIBackend()}),{mode:route==='local'?InferenceMode.ONLY_ON_DEVICE:InferenceMode.ONLY_IN_CLOUD,...(route==='local'?{...(schema?{onDeviceParams:{promptOptions:{responseConstraint:localProposalResponseSchema(Schema)}}}:{})}:{inCloudParams:{model:e.VITE_FIREBASE_MODEL,...(schema?{generationConfig:{responseMimeType:'application/json',responseSchema:schema}}:{})}})});
  if(route==='local')await model.initializeDeviceModel();
  const result=await model.generateContent(prompt);
  const expectedSource=route==='local'?InferenceSource.ON_DEVICE:InferenceSource.IN_CLOUD;

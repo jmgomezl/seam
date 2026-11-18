@@ -25,3 +25,7 @@ test('fences do not bypass quote verification or execute embedded code',()=>{
  assert.equal(parseProposal(JSON.stringify({...proposal,reason}),input).reason,reason);
  assert.equal((globalThis as any).__seamParserExecuted,undefined);
 });
+test('model abstention discards fabricated side objects rather than promoting declarations',()=>{
+ const raw=JSON.stringify({status:'abstain',producer:{unitsPerMajor:1,currency:'USD',quote:'amount is provided'},consumer:{unitsPerMajor:1,currency:'USD',quote:'show the amount'},reason:'Missing numeric units and currency.'});
+ assert.deepEqual(parseProposal(raw,input),{status:'abstain',producer:null,consumer:null,reason:'Missing numeric units and currency.'});
+});
