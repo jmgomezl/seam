@@ -2,9 +2,11 @@ import {confirmReviewedProposal,type HumanUnitReview} from './proposal-review.ts
 import {inferText,firebaseConfigured} from './firebase.ts';
 import {requestProposal,declarationWitnesses,declarationHarness,type ProposalReceipt,type Excerpts,type ConfirmedUnits} from './proposal.ts';
 const esc=(v:unknown)=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
-export function proposalView(root:HTMLElement){
- let receipt:ProposalReceipt|null=null,confirmed:ConfirmedUnits|null=null,busy=false,version=0;
- root.innerHTML=`<section class="panel"><h1>From excerpts to a check</h1><p>Public or synthetic display-unit contracts only. AI proposes; you confirm. Nothing is sent until you request extraction.</p><label>Producer excerpt<textarea id="proposal-producer" maxlength="8000" rows="4">Synthetic contract: amount is an integer number of USD cents. 100 units represent one USD.</textarea></label><label>Consumer excerpt<textarea id="proposal-consumer" maxlength="8000" rows="4">Synthetic contract: amount is an integer number of USD dollars. 1 unit represents one USD.</textarea></label><label><input id="proposal-public" type="checkbox"> These excerpts are public or synthetic, not private data.</label><label><input id="proposal-consent" type="checkbox"> Allow Firebase/App Check initialization and possible local-model download.</label><label>Inference route<select id="proposal-route"><option value="local">On-device only · no cloud fallback</option><option value="cloud">Cloud · sends both excerpts</option></select></label><label><input id="proposal-cloud" type="checkbox"> Send these two excerpts to the configured Google cloud model for this one request.</label><button id="proposal-run" ${firebaseConfigured()?'':'disabled'}>Extract unit candidates</button>${firebaseConfigured()?'':'<p>Firebase is not configured. Extraction is disabled; no canned AI response is substituted.</p>'}<div id="proposal-status" role="status" tabindex="-1"></div><div id="proposal-result"></div><p>Quote matching does not establish that a model interpreted the contract correctly. Generated checks compare confirmed declarations only, not production code. Inputs remain in page memory; cloud sends only on an explicitly approved request. Export includes declarations, not excerpts.</p></section>`;
+// One proposal request per page lifetime, including navigation away and back.
+let pendingProposal:Promise<ProposalReceipt>|null=null;
+export function proposalView(root:HTMLElement,onManual?:()=>void){
+ let receipt:ProposalReceipt|null=null,confirmed:ConfirmedUnits|null=null,busy=!!pendingProposal,version=0;
+ root.innerHTML=`<section class="panel"><h1>From excerpts to a check</h1><p>Public or synthetic display-unit contracts only. AI proposes; you confirm. Nothing is sent until you request extraction.</p><label>Producer excerpt<textarea id="proposal-producer" maxlength="8000" rows="4">Synthetic contract: amount is an integer number of USD cents. 100 units represent one USD.</textarea></label><label>Consumer excerpt<textarea id="proposal-consumer" maxlength="8000" rows="4">Synthetic contract: amount is an integer number of USD dollars. 1 unit represents one USD.</textarea></label><label><input id="proposal-public" type="checkbox"> These excerpts are public or synthetic, not private data.</label><label><input id="proposal-consent" type="checkbox"> Allow Firebase/App Check initialization and possible local-model download.</label><label>Inference route<select id="proposal-route"><option value="local">On-device only · no cloud fallback</option><option value="cloud">Cloud · sends both excerpts</option></select></label><label><input id="proposal-cloud" type="checkbox"> Send these two excerpts to the configured Google cloud model for this one request.</label><button id="proposal-run" ${firebaseConfigured()&&!pendingProposal?'':'disabled'}>Extract unit candidates</button><button id="proposal-stop" disabled>Stop waiting</button><button id="proposal-manual" ${onManual?'':'disabled'}>Continue manually · no AI</button><small>Opens your local boundary form without copying excerpts. Leaving clears this proposal.</small>${firebaseConfigured()?'':'<p>Firebase is not configured. Extraction is disabled; no canned AI response is substituted.</p>'}<div id="proposal-status" role="status" tabindex="-1"></div><div id="proposal-result"></div><p>Quote matching does not establish that a model interpreted the contract correctly. Generated checks compare confirmed declarations only, not production code. Inputs remain in page memory; cloud sends only on an explicitly approved request. Export includes declarations, not excerpts.</p></section>`;
  const view=root.firstElementChild;
  const active=()=>root.isConnected&&root.firstElementChild===view;
  const el=<T extends HTMLElement>(id:string)=>root.querySelector<T>('#'+id)!;
@@ -13,11 +15,24 @@ export function proposalView(root:HTMLElement){
  const invalidate=(keepCloudChoice=false)=>{version++;receipt=null;confirmed=null;el('proposal-result').replaceChildren();if(!keepCloudChoice)el<HTMLInputElement>('proposal-cloud').checked=false;if(busy)status('Pending result discarded. The in-flight request may still finish; already-sent cloud excerpts cannot be recalled.');};
  for(const id of ['proposal-producer','proposal-consumer','proposal-route','proposal-public','proposal-consent'])el(id).addEventListener('input',()=>invalidate());
  el('proposal-cloud').addEventListener('input',()=>invalidate(true));
+ const refreshAvailability=()=>{if(!active())return;busy=!!pendingProposal;el<HTMLButtonElement>('proposal-run').disabled=busy||!firebaseConfigured();};
+ refreshAvailability();
+ if(pendingProposal){
+  status('An earlier proposal request is still running. You can continue manually; another extraction is blocked until it settles.');
+  pendingProposal.then(refreshAvailability,refreshAvailability);
+ }
+ el('proposal-stop').onclick=()=>{
+  if(!busy)return;invalidate();el<HTMLButtonElement>('proposal-stop').disabled=true;
+  status('Stopped waiting; this result will be ignored. Inference or download may continue and sent cloud excerpts cannot be recalled. Continue manually now; another extraction stays blocked until the request settles.');
+ };
+ el('proposal-manual').onclick=()=>{if(!onManual)return;invalidate();onManual();};
  el('proposal-run').onclick=async()=>{
-  if(busy)return;const requestCloudConsent=el<HTMLInputElement>('proposal-cloud').checked;invalidate();const requestVersion=version;busy=true;el<HTMLButtonElement>('proposal-run').disabled=true;
+  if(busy||pendingProposal)return;const requestCloudConsent=el<HTMLInputElement>('proposal-cloud').checked;invalidate();const requestVersion=version;busy=true;el<HTMLButtonElement>('proposal-run').disabled=true;el<HTMLButtonElement>('proposal-stop').disabled=false;
   status('Requesting candidates. Local initialization may take several minutes.');
   try{const route=el<HTMLSelectElement>('proposal-route').value as 'local'|'cloud';
-   const result=await requestProposal(input(),route,el<HTMLInputElement>('proposal-consent').checked,requestCloudConsent,el<HTMLInputElement>('proposal-public').checked,(prompt,route,consent,cloudConsent)=>inferText(prompt,route,consent,cloudConsent,'proposal'));
+   const request=requestProposal(input(),route,el<HTMLInputElement>('proposal-consent').checked,requestCloudConsent,el<HTMLInputElement>('proposal-public').checked,(prompt,route,consent,cloudConsent)=>inferText(prompt,route,consent,cloudConsent,'proposal'));
+   const tracked=request.finally(()=>{if(pendingProposal===tracked)pendingProposal=null;});pendingProposal=tracked;
+   const result=await tracked;
    if(version!==requestVersion||!active())return;
    receipt=result;status(`Response source: ${result.source}. ${result.proposal.status==='abstain'?'Insufficient evidence; no test generated.':'Candidates require your confirmation.'}`);
    const p=result.proposal;
@@ -32,6 +47,6 @@ export function proposalView(root:HTMLElement){
     }catch(e){clearWitness();status(e instanceof Error?e.message:String(e));}};
    }
   }catch(e){if(version===requestVersion&&active())status(e instanceof Error?e.message:String(e));}
-  finally{busy=false;if(active()){const button=root.querySelector<HTMLButtonElement>('#proposal-run');if(button)button.disabled=!firebaseConfigured();}}
+  finally{busy=false;if(active()){el<HTMLButtonElement>('proposal-stop').disabled=true;refreshAvailability();}}
  };
 }
