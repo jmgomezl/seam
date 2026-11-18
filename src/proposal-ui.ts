@@ -16,7 +16,7 @@ export function proposalView(root:HTMLElement){
   if(busy)return;const requestCloudConsent=el<HTMLInputElement>('proposal-cloud').checked;invalidate();const requestVersion=version;busy=true;el<HTMLButtonElement>('proposal-run').disabled=true;
   status('Requesting candidates. Local initialization may take several minutes.');
   try{const route=el<HTMLSelectElement>('proposal-route').value as 'local'|'cloud';
-   const result=await requestProposal(input(),route,el<HTMLInputElement>('proposal-consent').checked,requestCloudConsent,el<HTMLInputElement>('proposal-public').checked,inferText);
+   const result=await requestProposal(input(),route,el<HTMLInputElement>('proposal-consent').checked,requestCloudConsent,el<HTMLInputElement>('proposal-public').checked,(prompt,route,consent,cloudConsent)=>inferText(prompt,route,consent,cloudConsent,'proposal'));
    if(version!==requestVersion||!active())return;
    receipt=result;status(`Response source: ${result.source}. ${result.proposal.status==='abstain'?'Insufficient evidence; no test generated.':'Candidates require your confirmation.'}`);
    const p=result.proposal;
