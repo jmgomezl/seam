@@ -49,14 +49,19 @@ test('first read names the user, rule and scope without an executed finding',()=
  assert.match(host.html,/Does it fulfill twice/);
  assert.match(host.html,/See what happens/);
  assert.match(host.html,/No API requests, shipments or payments/);
- assert.doesNotMatch(host.html,/Next step for your code/);
+ assert.doesNotMatch(host.html,/Next step for your fulfillment handler/);
 }));
 
-test('completed demo hands off to the existing scoped local lab and home stays reachable',()=>fixture(async(host,routes)=>{
+test('completed demo offers fulfillment-specific handoff with separate other-checks navigation',()=>fixture(async(host,routes)=>{
  await host.querySelector('#replay-run')!.listeners.click();
- assert.match(host.html,/Next step for your code/);
+ assert.match(host.html,/Next step for your fulfillment handler/);
  assert.match(host.html,/bundled examples, not your integration/);
- assert.match(host.html,/trusted local formatter or JSON Merge Patch \(RFC 7396\) adapter/);
+ assert.match(host.html,/Test my fulfillment handler locally/);
+ assert.match(host.html,/--adapter \.\/adapter\.mjs --report \.\/review-001\.json/);
+ assert.match(host.html,/Export <code>createHandler/);
+ assert.match(host.html,/Trusted code only, not a sandbox/);
+ assert.match(host.html,/Explore other checks: currency &amp; merge patch/);
+ assert.doesNotMatch(host.html,/Test my code locally/);
  const local=host.nav.filter(n=>n.dataset.nav==='lab').at(-1)!;local.onclick!();
  const home=host.nav.find(n=>n.dataset.nav==='start')!;home.onclick!();
  assert.deepEqual(routes,['lab','start']);
