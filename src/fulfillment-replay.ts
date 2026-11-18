@@ -1,21 +1,23 @@
 /** Synthetic, single-process fulfillment boundary. No Stripe SDK/API or credentials. */
-export type FulfillmentRequest = {sessionId:string; paymentStatus:'paid'|'unpaid'|'no_payment_required'};
+export type FulfillmentRequest = {sessionId:string; paymentStatus:'paid'|'unpaid'|'no_payment_required';trigger?:'webhook'|'redirect';eventId?:string;eventType?:'checkout.session.completed'|'checkout.session.async_payment_succeeded'};
 export type ReplayPorts = {recordFulfillment:(sessionId:string)=>void; checkpoint:()=>Promise<void>};
 export type FulfillmentHandler = (request:FulfillmentRequest)=>Promise<void>;
 export type HandlerFactory = (ports:ReplayPorts)=>FulfillmentHandler;
 export type FulfillmentCase = {id:string; batches:FulfillmentRequest[][]; expected:string[]};
-const paid = (sessionId:string):FulfillmentRequest=>({sessionId,paymentStatus:'paid'});
+// Trigger labels are synthetic metadata, not verified webhook payloads.
+// paymentStatus stands in for a retrieved session snapshot; no API is called.
+const paid = (sessionId:string):FulfillmentRequest=>({sessionId,paymentStatus:'paid',trigger:'webhook',eventId:'evt_demo_'+sessionId,eventType:'checkout.session.completed'});
 /** Independently authored expectations; never inferred from the adapter under test. */
 export function fulfillmentCases():FulfillmentCase[]{return [
  {id:'one-paid-session',batches:[[paid('cs_demo_a')]],expected:['cs_demo_a']},
  {id:'sequential-redelivery',batches:[[paid('cs_demo_a')],[paid('cs_demo_a')]],expected:['cs_demo_a']},
- {id:'concurrent-same-session',batches:[[paid('cs_demo_a'),paid('cs_demo_a')]],expected:['cs_demo_a']},
+ {id:'concurrent-same-session',batches:[[paid('cs_demo_a'),{sessionId:'cs_demo_a',paymentStatus:'paid',trigger:'redirect'}]],expected:['cs_demo_a']},
  {id:'five-call-burst',batches:[Array.from({length:5},()=>paid('cs_demo_a'))],expected:['cs_demo_a']},
  {id:'distinct-sessions',batches:[[paid('cs_demo_a'),paid('cs_demo_b')]],expected:['cs_demo_a','cs_demo_b']},
  {id:'unpaid-does-not-fulfill',batches:[[{sessionId:'cs_demo_a',paymentStatus:'unpaid'}]],expected:[]},
- {id:'unpaid-then-paid',batches:[[{sessionId:'cs_demo_a',paymentStatus:'unpaid'}],[paid('cs_demo_a')]],expected:['cs_demo_a']},
+ {id:'unpaid-then-paid',batches:[[{...paid('cs_demo_a'),paymentStatus:'unpaid'}],[{...paid('cs_demo_a'),eventId:'evt_demo_async_a',eventType:'checkout.session.async_payment_succeeded'}]],expected:['cs_demo_a']},
  {id:'no-payment-required',batches:[[{sessionId:'cs_demo_a',paymentStatus:'no_payment_required'}]],expected:['cs_demo_a']},
- {id:'replay-after-burst',batches:[[paid('cs_demo_a'),paid('cs_demo_b')],[paid('cs_demo_a'),paid('cs_demo_b')]],expected:['cs_demo_a','cs_demo_b']},
+ {id:'replay-after-burst',batches:[[paid('cs_demo_a'),paid('cs_demo_b')],[{...paid('cs_demo_a'),eventId:'evt_demo_later_a'},{...paid('cs_demo_b'),eventId:'evt_demo_later_b'}]],expected:['cs_demo_a','cs_demo_b']},
  ];}
 /** Deliberate bug: read -> async work -> write allows concurrent duplicates. */
 export const racyHandler:HandlerFactory=({recordFulfillment,checkpoint})=>{
