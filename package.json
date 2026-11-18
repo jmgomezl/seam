@@ -1,0 +1,1 @@
+{"name":"seam-reconstructed","version":"0.2.0-reconstructed","private":true,"type":"module","scripts":{"dev":"vite --host 0.0.0.0","build":"tsc --noEmit && vite build","typecheck":"tsc --noEmit","test":"node --experimental-strip-types --test tests/*.test.ts"},"dependencies":{"firebase":"13.4.0"},"devDependencies":{"typescript":"5.9.3","vite":"6.4.6"}}

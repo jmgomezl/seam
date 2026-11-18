@@ -1,0 +1,15 @@
+{
+  "provenance": "Transcribed from available conversation history and tool-output summary, not recovered original evidence files",
+  "original_bytes_recovered": false,
+  "reported_original_holdout": {"cases":12,"seam_correct":9,"claude_correct":12,"seam_mismatches_detected":3,"claude_mismatches_detected":5,"true_mismatches":5,"healthy_cases":5,"seam_false_alarms":0,"claude_false_alarms":0,"seam_appropriate_abstentions":2,"claude_appropriate_abstentions":2,"seam_unnecessary_abstentions":2,"claude_unnecessary_abstentions":0,"human_seconds":null},
+  "reported_prior_timing_not_reverified": {"seam_in_process_ms":0.379262,"claude_submit_to_observed_completion_ms":31332,"directly_comparable":false},
+  "reported_prior_checks": {"first_test_count":22,"post_repair_test_count":29,"recovered_logs":false},
+  "historical_hashes_for_future_recovery_only": {
+    "holdout_input":"e37f5382e878da8bff21cddf251b4236883335003185a2a7c11813cdbb53fe3e",
+    "holdout_oracle":"e7f5121db8cc64bffb6de82b2fae45d3e909c5b2e77dd504f20c233cda6ba6da",
+    "frozen_engine":"948f870719f4e1c09cbe52745b19f57976d1e67e4235cf2c6c8d9db08a52b38c"
+  },
+  "do_not_use_historical_hashes_for_reconstructed_files":true,
+  "new_claude_run":false,
+  "new_firebase_inference":false
+}

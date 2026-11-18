@@ -1,0 +1,54 @@
+
+> seam-reconstructed@0.2.0-reconstructed test
+> node --experimental-strip-types --test tests/*.test.ts
+
+✔ R17 reconstructed operation (8.187181ms)
+✔ R42 reconstructed operation (0.50495ms)
+✔ R09 reconstructed operation (1.351976ms)
+✔ R61 reconstructed operation (0.682193ms)
+✔ R28 reconstructed operation (0.327268ms)
+✔ R35 reconstructed operation (0.386626ms)
+✔ R73 reconstructed operation (0.440305ms)
+✔ R84 reconstructed operation (0.3115ms)
+✔ R71c4 reconstructed operation (0.349306ms)
+✔ Rb2e9 reconstructed operation (0.426092ms)
+✔ R0f63 reconstructed operation (0.519183ms)
+✔ Ra85d reconstructed operation (0.202697ms)
+✔ R34bf reconstructed operation (0.147833ms)
+✔ Rec27 reconstructed operation (0.139082ms)
+✔ R5d90 reconstructed operation (0.168674ms)
+✔ R998a reconstructed operation (0.16769ms)
+✔ R460e reconstructed operation (0.112887ms)
+✔ Rd17f reconstructed operation (0.104467ms)
+✔ R6ac2 reconstructed operation (0.078212ms)
+✔ Rf308 reconstructed operation (0.10159ms)
+✔ zero cannot erase declared scale conflict and witness is executable (0.266837ms)
+✔ currency conflict survives unknown scale without invented numeric result (0.220085ms)
+✔ explicit offset denotes independently calculated expected instant (0.131542ms)
+✔ different wall-clock offsets produce fifteen minute difference (0.177614ms)
+✔ invalid calendar date abstains instead of normalizing into a match (0.280471ms)
+✔ invalid amount scale is not successful agreement (0.113641ms)
+✔ repairing serialization preserves prior field (0.134959ms)
+✔ regression export truly fails zero case and passes known healthy offset (258.02575ms)
+✔ ambiguous export reports insufficient evidence (129.265612ms)
+✔ evidence fingerprints are reproducible and sensitive to input (22.271918ms)
+✔ model prompt excludes answer keys, source links and executable semantics (0.47065ms)
+✔ route gate requires initialization consent and separate cloud consent (0.703112ms)
+✔ AI output cannot promote a hypothesis to verified (0.153926ms)
+✔ AI duplicate, malformed and foreign results are rejected (0.289537ms)
+✔ preserved execution bytes agree with upstream evidence (4.223921ms)
+✔ before and after totals preserve the residual failure (0.515624ms)
+✔ JPY roundtrip hides boundary mismatch (0.436143ms)
+✔ both project and revision filters are exact (0.461476ms)
+✔ export retains both revisions and caveats, not an invented live run (0.75495ms)
+✔ unknown runtime routes fail closed even with consent (2.838476ms)
+✔ local unavailable does not authorize cloud routing (0.415127ms)
+✔ adapter wiring retains strict modes before sending a prompt (1.230972ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 42
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 805.085984

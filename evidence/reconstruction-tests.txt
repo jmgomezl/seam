@@ -1,0 +1,47 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> seam-reconstructed@0.2.0-reconstructed test
+> node --experimental-strip-types --test tests/*.test.ts
+
+✔ R17 reconstructed operation (3.007486ms)
+✔ R42 reconstructed operation (0.288035ms)
+✔ R09 reconstructed operation (0.644871ms)
+✔ R61 reconstructed operation (0.126136ms)
+✔ R28 reconstructed operation (0.236318ms)
+✔ R35 reconstructed operation (0.153697ms)
+✔ R73 reconstructed operation (0.24396ms)
+✔ R84 reconstructed operation (0.119396ms)
+✔ R71c4 reconstructed operation (0.376616ms)
+✔ Rb2e9 reconstructed operation (0.315846ms)
+✔ R0f63 reconstructed operation (0.167177ms)
+✔ Ra85d reconstructed operation (0.148459ms)
+✔ R34bf reconstructed operation (0.129971ms)
+✔ Rec27 reconstructed operation (0.089923ms)
+✔ R5d90 reconstructed operation (0.155429ms)
+✔ R998a reconstructed operation (0.111525ms)
+✔ R460e reconstructed operation (0.075261ms)
+✔ Rd17f reconstructed operation (0.083143ms)
+✔ R6ac2 reconstructed operation (0.079217ms)
+✔ Rf308 reconstructed operation (0.161528ms)
+✔ zero cannot erase declared scale conflict and witness is executable (0.178493ms)
+✔ currency conflict survives unknown scale without invented numeric result (0.131734ms)
+✔ explicit offset denotes independently calculated expected instant (0.126297ms)
+✔ different wall-clock offsets produce fifteen minute difference (0.120388ms)
+✔ invalid calendar date abstains instead of normalizing into a match (0.11548ms)
+✔ invalid amount scale is not successful agreement (0.172164ms)
+✔ repairing serialization preserves prior field (0.127127ms)
+✔ regression export truly fails zero case and passes known healthy offset (180.191387ms)
+✔ ambiguous export reports insufficient evidence (98.169253ms)
+✔ evidence fingerprints are reproducible and sensitive to input (18.261316ms)
+✔ model prompt excludes answer keys, source links and executable semantics (0.263238ms)
+✔ route gate requires initialization consent and separate cloud consent (0.669718ms)
+✔ AI output cannot promote a hypothesis to verified (0.126867ms)
+✔ AI duplicate, malformed and foreign results are rejected (0.199274ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 535.223149

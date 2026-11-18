@@ -1,0 +1,18 @@
+{
+ "scope":"New reconstruction UI, 2026-11-17; observed through supported CUA actions",
+ "cases_exercised":20,
+ "zero_declaration_mismatch_sample_aligned":true,
+ "nonzero_witness_sample_mismatch":true,
+ "reset_restored_stored_zero":true,
+ "historical_provenance_warning_visible":true,
+ "local_without_consent":"rejected before SDK initialization",
+ "cloud_without_consent":"rejected before SDK initialization",
+ "prompt_api_availability":"unavailable",
+ "model_initialized":false,
+ "narrow_viewport_px":500,
+ "document_width_px":485,
+ "narrow_views":["workbench","evaluation","runtime"],
+ "browser_export_executed":"browser-zero-regression.mjs; expected AssertionError on declared scale mismatch",
+ "screenshots_saved":false,
+ "screenshots_uploaded_to_library":false
+}

@@ -1,0 +1,330 @@
+{
+  "created_at": "2026-11-17T09:28:30.721Z",
+  "expectations_file": "baseline-tests.json",
+  "elapsed_ms": 108.24908500000004,
+  "runtime": {
+    "node": "v24.22.1",
+    "icu": "78.3",
+    "typescript": "5.9.3",
+    "php": "Debian 8.4.27 local extracted CLI"
+  },
+  "scope": "Unmodified PHP controller/helper with local framework and SDK doubles; exact AST-extracted TS formatting functions; no app UI/database/live API/real payment execution.",
+  "checks": [
+    {
+      "id": "IP-before-JPY",
+      "target": "invoice",
+      "revision": "before",
+      "expected": 100,
+      "actual": 10000,
+      "pass": false,
+      "recordedMajor": 100,
+      "actualMajorByContract": 10000,
+      "roundtripPass": true
+    },
+    {
+      "id": "IP-before-USD",
+      "target": "invoice",
+      "revision": "before",
+      "expected": 1234,
+      "actual": 1234,
+      "pass": true,
+      "recordedMajor": 12.34,
+      "actualMajorByContract": 12.34,
+      "roundtripPass": true
+    },
+    {
+      "id": "IP-before-UGX",
+      "target": "invoice",
+      "revision": "before",
+      "expected": 500,
+      "actual": 500,
+      "pass": true,
+      "recordedMajor": 5,
+      "actualMajorByContract": 5,
+      "roundtripPass": true
+    },
+    {
+      "id": "LINK-before-JPY",
+      "target": "checkout",
+      "revision": "before",
+      "expected": 1000,
+      "actual": 10,
+      "rendered": "$10.00 JPY",
+      "pass": false
+    },
+    {
+      "id": "LINK-before-JPY",
+      "target": "catalog",
+      "revision": "before",
+      "expected": 1000,
+      "actual": 10,
+      "rendered": "$10.00 JPY",
+      "pass": false
+    },
+    {
+      "id": "LINK-before-KRW",
+      "target": "checkout",
+      "revision": "before",
+      "expected": 5000,
+      "actual": 50,
+      "rendered": "$50.00 KRW",
+      "pass": false
+    },
+    {
+      "id": "LINK-before-KRW",
+      "target": "catalog",
+      "revision": "before",
+      "expected": 5000,
+      "actual": 50,
+      "rendered": "$50.00 KRW",
+      "pass": false
+    },
+    {
+      "id": "LINK-before-KWD",
+      "target": "checkout",
+      "revision": "before",
+      "expected": 1,
+      "actual": 10,
+      "rendered": "$10.00 KWD",
+      "pass": false
+    },
+    {
+      "id": "LINK-before-KWD",
+      "target": "catalog",
+      "revision": "before",
+      "expected": 1,
+      "actual": 10,
+      "rendered": "$10.00 KWD",
+      "pass": false
+    },
+    {
+      "id": "LINK-before-USD",
+      "target": "checkout",
+      "revision": "before",
+      "expected": 12.34,
+      "actual": 12.34,
+      "rendered": "$12.34 USD",
+      "pass": true
+    },
+    {
+      "id": "LINK-before-USD",
+      "target": "catalog",
+      "revision": "before",
+      "expected": 12.34,
+      "actual": 12.34,
+      "rendered": "$12.34 USD",
+      "pass": true
+    },
+    {
+      "id": "LINK-before-EUR",
+      "target": "checkout",
+      "revision": "before",
+      "expected": 12.34,
+      "actual": 12.34,
+      "rendered": "$12.34 EUR",
+      "pass": true
+    },
+    {
+      "id": "LINK-before-EUR",
+      "target": "catalog",
+      "revision": "before",
+      "expected": 12.34,
+      "actual": 12.34,
+      "rendered": "$12.34 EUR",
+      "pass": true
+    },
+    {
+      "id": "IP-after-JPY",
+      "target": "invoice",
+      "revision": "after",
+      "expected": 100,
+      "actual": 100,
+      "pass": true,
+      "recordedMajor": 100,
+      "actualMajorByContract": 100,
+      "roundtripPass": true
+    },
+    {
+      "id": "IP-after-USD",
+      "target": "invoice",
+      "revision": "after",
+      "expected": 1234,
+      "actual": 1234,
+      "pass": true,
+      "recordedMajor": 12.34,
+      "actualMajorByContract": 12.34,
+      "roundtripPass": true
+    },
+    {
+      "id": "IP-after-UGX",
+      "target": "invoice",
+      "revision": "after",
+      "expected": 500,
+      "actual": 5,
+      "pass": false,
+      "recordedMajor": 5,
+      "actualMajorByContract": 0.05,
+      "roundtripPass": true
+    },
+    {
+      "id": "LINK-after-JPY",
+      "target": "checkout",
+      "revision": "after",
+      "expected": 1000,
+      "actual": 1000,
+      "rendered": "¥1,000",
+      "pass": true
+    },
+    {
+      "id": "LINK-after-JPY",
+      "target": "catalog",
+      "revision": "after",
+      "expected": 1000,
+      "actual": 1000,
+      "rendered": "¥1,000",
+      "pass": true
+    },
+    {
+      "id": "LINK-after-KRW",
+      "target": "checkout",
+      "revision": "after",
+      "expected": 5000,
+      "actual": 5000,
+      "rendered": "₩5,000",
+      "pass": true
+    },
+    {
+      "id": "LINK-after-KRW",
+      "target": "catalog",
+      "revision": "after",
+      "expected": 5000,
+      "actual": 5000,
+      "rendered": "₩5,000",
+      "pass": true
+    },
+    {
+      "id": "LINK-after-KWD",
+      "target": "checkout",
+      "revision": "after",
+      "expected": 1,
+      "actual": 1,
+      "rendered": "KWD 1.000",
+      "pass": true
+    },
+    {
+      "id": "LINK-after-KWD",
+      "target": "catalog",
+      "revision": "after",
+      "expected": 1,
+      "actual": 1,
+      "rendered": "KWD 1.000",
+      "pass": true
+    },
+    {
+      "id": "LINK-after-USD",
+      "target": "checkout",
+      "revision": "after",
+      "expected": 12.34,
+      "actual": 12.34,
+      "rendered": "$12.34",
+      "pass": true
+    },
+    {
+      "id": "LINK-after-USD",
+      "target": "catalog",
+      "revision": "after",
+      "expected": 12.34,
+      "actual": 12.34,
+      "rendered": "$12.34",
+      "pass": true
+    },
+    {
+      "id": "LINK-after-EUR",
+      "target": "checkout",
+      "revision": "after",
+      "expected": 12.34,
+      "actual": 12.34,
+      "rendered": "€12.34",
+      "pass": true
+    },
+    {
+      "id": "LINK-after-EUR",
+      "target": "catalog",
+      "revision": "after",
+      "expected": 12.34,
+      "actual": 12.34,
+      "rendered": "€12.34",
+      "pass": true
+    }
+  ],
+  "trace": [
+    {
+      "adapter": "invoice",
+      "revision": "before",
+      "process_ms": 18.069512999999972,
+      "raw": [
+        {
+          "id": "IP-before-JPY",
+          "wireAmount": 10000,
+          "recordedMajor": 100,
+          "actualMajorByContract": 10000,
+          "transport": "in-memory fake; no Stripe SDK or network"
+        },
+        {
+          "id": "IP-before-USD",
+          "wireAmount": 1234,
+          "recordedMajor": 12.34,
+          "actualMajorByContract": 12.34,
+          "transport": "in-memory fake; no Stripe SDK or network"
+        },
+        {
+          "id": "IP-before-UGX",
+          "wireAmount": 500,
+          "recordedMajor": 5,
+          "actualMajorByContract": 5,
+          "transport": "in-memory fake; no Stripe SDK or network"
+        }
+      ]
+    },
+    {
+      "adapter": "invoice",
+      "revision": "after",
+      "process_ms": 21.931118999999967,
+      "raw": [
+        {
+          "id": "IP-after-JPY",
+          "wireAmount": 100,
+          "recordedMajor": 100,
+          "actualMajorByContract": 100,
+          "transport": "in-memory fake; no Stripe SDK or network"
+        },
+        {
+          "id": "IP-after-USD",
+          "wireAmount": 1234,
+          "recordedMajor": 12.34,
+          "actualMajorByContract": 12.34,
+          "transport": "in-memory fake; no Stripe SDK or network"
+        },
+        {
+          "id": "IP-after-UGX",
+          "wireAmount": 5,
+          "recordedMajor": 5,
+          "actualMajorByContract": 0.05,
+          "transport": "in-memory fake; no Stripe SDK or network"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "before": {
+      "passed": 6,
+      "failed": 7,
+      "total": 13
+    },
+    "after": {
+      "passed": 12,
+      "failed": 1,
+      "total": 13
+    }
+  }
+}

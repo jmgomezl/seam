@@ -1,0 +1,71 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> seam-reconstructed@0.2.0-reconstructed test
+> node --experimental-strip-types --test tests/*.test.ts
+
+✔ sanitized default exposes 100-fold payment disagreement (30.124534ms)
+✔ preview aligns declarations without mutating original (0.360107ms)
+✔ zero retains declaration conflict and witness (0.650896ms)
+✔ unknown scale remains ambiguous absent known conflict (0.409527ms)
+✔ currency disagreement survives unknown scale (0.531483ms)
+✔ missing currency is incomplete evidence (2.347194ms)
+✔ invalid JSON, missing path, null, strings and oversized numbers fail clearly (0.880658ms)
+✔ units reject nonfinite, negative, decimal and excessive scales (0.406224ms)
+✔ root, escaped pointers and array index work (0.532592ms)
+✔ prototype properties cannot be traversed (0.381705ms)
+✔ limits constrain size and preserve exact entered notes (0.453309ms)
+✔ exported mismatched/zero tests fail; aligned tests pass; new response validated (553.217409ms)
+✔ export can be imported without reading process arguments (100.627936ms)
+✔ export preserves JSON __proto__ keys at root and nested levels (189.100281ms)
+✔ small nonzero impact is never rounded into apparent zero (0.469758ms)
+✔ field picker enumerates escaped paths, arrays, zero and root without inferring meaning (2.450237ms)
+✔ R17 reconstructed operation (4.485132ms)
+✔ R42 reconstructed operation (0.405856ms)
+✔ R09 reconstructed operation (1.281673ms)
+✔ R61 reconstructed operation (0.188881ms)
+✔ R28 reconstructed operation (0.221111ms)
+✔ R35 reconstructed operation (0.169135ms)
+✔ R73 reconstructed operation (0.34917ms)
+✔ R84 reconstructed operation (0.41421ms)
+✔ R71c4 reconstructed operation (0.740409ms)
+✔ Rb2e9 reconstructed operation (0.638342ms)
+✔ R0f63 reconstructed operation (0.371836ms)
+✔ Ra85d reconstructed operation (0.161226ms)
+✔ R34bf reconstructed operation (0.15573ms)
+✔ Rec27 reconstructed operation (0.164696ms)
+✔ R5d90 reconstructed operation (0.16554ms)
+✔ R998a reconstructed operation (0.141909ms)
+✔ R460e reconstructed operation (0.196946ms)
+✔ Rd17f reconstructed operation (0.113414ms)
+✔ R6ac2 reconstructed operation (0.07441ms)
+✔ Rf308 reconstructed operation (0.083653ms)
+✔ zero cannot erase declared scale conflict and witness is executable (0.177263ms)
+✔ currency conflict survives unknown scale without invented numeric result (0.216816ms)
+✔ explicit offset denotes independently calculated expected instant (0.225879ms)
+✔ different wall-clock offsets produce fifteen minute difference (0.141694ms)
+✔ invalid calendar date abstains instead of normalizing into a match (0.147994ms)
+✔ invalid amount scale is not successful agreement (0.281666ms)
+✔ repairing serialization preserves prior field (0.307746ms)
+✔ regression export truly fails zero case and passes known healthy offset (260.841081ms)
+✔ ambiguous export reports insufficient evidence (124.701981ms)
+✔ evidence fingerprints are reproducible and sensitive to input (19.615835ms)
+✔ model prompt excludes answer keys, source links and executable semantics (0.453957ms)
+✔ route gate requires initialization consent and separate cloud consent (0.750837ms)
+✔ AI output cannot promote a hypothesis to verified (0.195409ms)
+✔ AI duplicate, malformed and foreign results are rejected (0.154278ms)
+✔ preserved execution bytes agree with upstream evidence (3.337231ms)
+✔ before and after totals preserve the residual failure (0.359974ms)
+✔ JPY roundtrip hides boundary mismatch (0.567739ms)
+✔ both project and revision filters are exact (2.073371ms)
+✔ export retains both revisions and caveats, not an invented live run (0.453918ms)
+✔ unknown runtime routes fail closed even with consent (2.402646ms)
+✔ local unavailable does not authorize cloud routing (0.373589ms)
+✔ adapter wiring retains strict modes before sending a prompt (1.2992ms)
+ℹ tests 58
+ℹ suites 0
+ℹ pass 58
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1287.061859

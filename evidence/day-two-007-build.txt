@@ -1,0 +1,23 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> seam-reconstructed@0.2.0-reconstructed build
+> tsc --noEmit && vite build
+
+vite v6.4.6 building for production...
+transforming...
+✓ 24 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.47 kB │ gzip:  0.32 kB
+dist/assets/index-CWb7uWws.css      9.42 kB │ gzip:  2.78 kB
+dist/assets/index.esm-CdGxf5PH.js   1.07 kB │ gzip:  0.64 kB
+dist/assets/index.esm-D0lsJHtn.js  23.07 kB │ gzip:  5.85 kB
+dist/assets/index.esm-O09MFM6c.js  40.33 kB │ gzip:  9.26 kB
+dist/assets/index-DOCWxps9.js      45.15 kB │ gzip: 15.99 kB
+dist/assets/index.esm-XmcPQgeU.js  51.60 kB │ gzip: 11.60 kB
+✓ built in 966ms
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

@@ -1,0 +1,52 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> seam-reconstructed@0.2.0-reconstructed test
+> node --experimental-strip-types --test tests/*.test.ts
+
+✔ R17 reconstructed operation (4.321277ms)
+✔ R42 reconstructed operation (0.262178ms)
+✔ R09 reconstructed operation (0.689101ms)
+✔ R61 reconstructed operation (0.172672ms)
+✔ R28 reconstructed operation (0.141723ms)
+✔ R35 reconstructed operation (0.088178ms)
+✔ R73 reconstructed operation (0.203711ms)
+✔ R84 reconstructed operation (0.09086ms)
+✔ R71c4 reconstructed operation (0.218637ms)
+✔ Rb2e9 reconstructed operation (0.401016ms)
+✔ R0f63 reconstructed operation (0.170192ms)
+✔ Ra85d reconstructed operation (0.150974ms)
+✔ R34bf reconstructed operation (0.069126ms)
+✔ Rec27 reconstructed operation (0.045829ms)
+✔ R5d90 reconstructed operation (0.087124ms)
+✔ R998a reconstructed operation (0.150129ms)
+✔ R460e reconstructed operation (0.055369ms)
+✔ Rd17f reconstructed operation (0.053286ms)
+✔ R6ac2 reconstructed operation (0.033833ms)
+✔ Rf308 reconstructed operation (0.035986ms)
+✔ zero cannot erase declared scale conflict and witness is executable (0.121887ms)
+✔ currency conflict survives unknown scale without invented numeric result (0.062385ms)
+✔ explicit offset denotes independently calculated expected instant (0.115521ms)
+✔ different wall-clock offsets produce fifteen minute difference (0.072639ms)
+✔ invalid calendar date abstains instead of normalizing into a match (0.057155ms)
+✔ invalid amount scale is not successful agreement (0.058791ms)
+✔ repairing serialization preserves prior field (0.071239ms)
+✔ regression export truly fails zero case and passes known healthy offset (357.441468ms)
+✔ ambiguous export reports insufficient evidence (114.471404ms)
+✔ evidence fingerprints are reproducible and sensitive to input (17.836533ms)
+✔ model prompt excludes answer keys, source links and executable semantics (0.41627ms)
+✔ route gate requires initialization consent and separate cloud consent (1.705945ms)
+✔ AI output cannot promote a hypothesis to verified (0.280528ms)
+✔ AI duplicate, malformed and foreign results are rejected (0.231531ms)
+✔ preserved execution bytes agree with upstream evidence (2.816148ms)
+✔ before and after totals preserve the residual failure (0.417496ms)
+✔ JPY roundtrip hides boundary mismatch (0.40637ms)
+✔ both project and revision filters are exact (0.302426ms)
+✔ export retains both revisions and caveats, not an invented live run (0.468867ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1113.963013
