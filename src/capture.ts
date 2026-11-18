@@ -41,7 +41,8 @@ export function checkPayload(payload) {
 }
 // Import checkPayload into your own test suite, or execute this file directly.
 import {pathToFileURL} from 'node:url';
-if(process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+import {existsSync,realpathSync} from 'node:fs';
+if(process.argv[1] && existsSync(process.argv[1]) && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
  const payload = process.argv[2] ? JSON.parse(readFileSync(process.argv[2], 'utf8')) : fallback;
  console.log('Declared boundary agrees:', checkPayload(payload));
 }

@@ -50,6 +50,7 @@ export function patchHarnessSource(){return `// Seam: authored omission/null ser
 // Review your adapter first: import executes your code. This harness is not a sandbox.
 // Each adapter receives an object and returns JSON text. Fixed synthetic expected states are independent of receiver implementation.
 import {pathToFileURL} from 'node:url';
+import {existsSync,realpathSync} from 'node:fs';
 import {resolve} from 'node:path';
 const probes=JSON.parse(${JSON.stringify(JSON.stringify(patchProbes()))});
 const broken=${brokenSerializer.toString()};
@@ -58,7 +59,7 @@ const merge=${applyMergePatch.toString()};
 const canonical=${canonicalJson.toString()};
 const execute=${executePatchProbes.toString()};
 export function checkSerializer(serializer){return execute(serializer,probes,merge,canonical);}
-if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
+if(process.argv[1]&&existsSync(process.argv[1])&&import.meta.url===pathToFileURL(realpathSync(process.argv[1])).href){
  const args=process.argv.slice(2);let adapter=args.includes('--fixed')?fixed:broken;const at=args.indexOf('--adapter');
  if(at>=0){if(!args[at+1])throw new Error('Supply an adapter module path');const m=await import(pathToFileURL(resolve(args[at+1])).href);adapter=m.serializePatch??m.default;if(typeof adapter!=='function')throw new Error('Export serializePatch or a default function');}
  const results=checkSerializer(adapter);for(const r of results)console.log((r.passed?'PASS':'FAIL')+' '+r.id+' wire='+r.wire+' expected='+JSON.stringify(r.expected)+' actual='+JSON.stringify(r.actual)+(r.error?' error='+r.error:''));

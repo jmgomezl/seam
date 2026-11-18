@@ -23,13 +23,14 @@ export function harnessSource(){return `// Seam executable boundary contract. No
 // Vendored stripe/link-cli snippets are MIT licensed; full notice below.
 ${'/*\n'+vendorLicense+'\n*/'}
 import {pathToFileURL} from 'node:url';
+import {existsSync,realpathSync} from 'node:fs';
 import {resolve} from 'node:path';
 const probes = ${JSON.stringify(makeProbes())};
 const executeProbes = ${executeProbes.toString()};
 const original = (()=>{${compiledAdapters.before};return formatAmount;})();
 const fixed = (()=>{${compiledAdapters.fixed};return formatAmount;})();
 export function checkAdapter(formatAmount){return executeProbes(formatAmount,probes);}
-if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
+if(process.argv[1] && existsSync(process.argv[1]) && import.meta.url===pathToFileURL(realpathSync(process.argv[1])).href){
  const args=process.argv.slice(2);let adapter=args.includes('--fixed')?fixed:original;
  const at=args.indexOf('--adapter');
  if(at>=0){if(!args[at+1])throw new Error('Supply an adapter module path');const m=await import(pathToFileURL(resolve(args[at+1])).href);adapter=m.formatAmount??m.default;if(typeof adapter!=='function')throw new Error('Export formatAmount or a default function');}
