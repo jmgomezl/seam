@@ -61,3 +61,15 @@ The **Demo → your local code** panel asks whether the exact contract fits. Uns
 ## Visual fulfillment replay
 
 The third lab selector opens **Fulfillment replay**. Choose a schedule, run both authored handlers and inspect their actual local effect ledgers. Sequential redelivery records once in both; overlapping calls expose duplicates in the racy implementation. All nine schedules execute, and the JSON download contains the actual results plus limitations. The single-process reference is not a production fix: no shared database, restart recovery, live Stripe calls or real fulfillment is exercised. Source links and CLI reproduction commands remain visible in the scenario.
+
+### Traceable local replay reports
+
+For a code-review or CI artifact, opt in to a new report file:
+
+```sh
+node --experimental-strip-types scripts/check-fulfillment.mjs --adapter ./examples/fulfillment-adapter.mjs --report ./replay-report.json
+```
+
+The report records a versioned format, timestamp, Node version, adapter mode, entry/replay module SHA-256 digests and per-fixture counts/outcomes. It excludes source contents, request inputs, ledger identifiers, adapter paths and error messages. Fixture numbers follow `fulfillmentCases()` order in the hashed replay module. It refuses to overwrite an existing file (exit 2); an observed source change during execution also prevents writing. Checks failing still exit 1, passing exit 0. Reports are local only; nothing is uploaded.
+
+A digest identifies bytes read, **not authorship, integrity, execution proof or attestation**. Transitive dependencies and runtime behavior are not attested. Review trusted code before running it. Existing console output still includes the full synthetic ledger and may include adapter-supplied output/errors; inspect it before sharing. Report redaction does not sandbox the adapter or sanitize its console logging. No hosted CI or production integration is configured by this option.
