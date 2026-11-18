@@ -16,7 +16,7 @@ Record: exact source commit, SDK/browser version, availability transition, succe
 
 ## Product acceptance
 
-The current AI feature reviews reconstructed boundary fixtures; it does not discover rules from arbitrary documents. A stronger next flow must accept bounded public contract excerpts, produce quoted candidate semantics, require human confirmation, and run independent deterministic counterexamples. Model suggestions must never be presented as verified tests or silently become the oracle. Unknown/missing evidence must permit abstention. This flow is not claimed as implemented here.
+The Runtime view reviews reconstructed boundary fixtures. The implemented Contract proposals subset accepts bounded public display-unit excerpts, validates quoted candidates, requires human confirmation, and generates declaration-only arithmetic witnesses. It does not discover rules from arbitrary repositories or execute an independent production adapter. That stronger adapter-validation workflow remains future work. Model suggestions are not verified facts; quote matching is not semantic proof, and missing evidence must permit abstention.
 
 ## Primary references
 
@@ -26,3 +26,11 @@ The current AI feature reviews reconstructed boundary fixtures; it does not disc
 - https://firebase.google.com/docs/reference/js/ai#inferencesource
 
 The SDK reference uses `on_device` and `in_cloud`, not UI labels. Configuration diagnostics expose missing field names only, never configuration values.
+
+## Bounded proposal prototype
+
+The Contract proposals view accepts two public/synthetic display-unit excerpts. It calls the same real Firebase SDK transport as Runtime, requires initialization consent, defaults to ONLY_ON_DEVICE, and requires a fresh explicit cloud checkbox for each cloud request. With missing Firebase config, extraction is disabled. There is no production mock or canned fallback.
+
+Candidate output is bounded JSON with units per major (1/100/1000), currency, and exact contiguous source quotes. A source quote match does not prove semantic entailment: the person must confirm both declarations. Missing/invalid evidence is rejected or abstains. Editing excerpts or routing/consent invalidates the pending result, including changes to the cloud checkbox. This suppresses later rendering but does not cancel an SDK request or model download already in flight, recall cloud excerpts already sent, or revoke an initialized App Check session. The UI states this when a pending result is discarded. The model's proposed expected values or code are never executed or used as an oracle.
+
+After confirmation, locally generated witnesses use 0,1,1250,-1250 to compare the two declared interpretations. These are arithmetic declaration checks, not an adapter run, a holdout benchmark, or production verification. Export excludes source excerpts and model prose and occurs only on explicit click. Input stays in page memory; an explicit cloud request transmits both excerpts. The unit-test mock transport is confined to tests. No live inference is claimed by this implementation.
