@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdtempSync,writeFileSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {handoff,adapterTemplate} from '../src/developer-handoff.ts';
+import {harnessSource} from '../src/lab.ts';
+import {patchHarnessSource} from '../src/patch-lab.ts';
+test('uncertain or incompatible contracts never unlock adapter handoff',()=>{for(const scenario of ['money','patch'] as const){for(const state of ['unanswered','unsure','different'] as const)assert.equal(handoff(scenario,state).canConnect,false);assert.equal(handoff(scenario,'fits').canConnect,true);assert.match(handoff(scenario,'fits').command,/--adapter \.\/seam-adapter.mjs/);}});
+test('scaffolds really fail until connected instead of reusing demo correction',()=>{const dir=mkdtempSync(join(tmpdir(),'seam-handoff-'));try{for(const scenario of ['money','patch'] as const){const h=handoff(scenario,'fits');writeFileSync(join(dir,h.filename),scenario==='money'?harnessSource():patchHarnessSource());writeFileSync(join(dir,'seam-adapter.mjs'),adapterTemplate(scenario));const result=spawnSync(process.execPath,[h.filename,'--adapter','./seam-adapter.mjs'],{cwd:dir,encoding:'utf8'});assert.equal(result.status,1,result.stderr);assert.match(result.stdout,/Adapter not connected/);assert.match(result.stdout,scenario==='money'?/0\/20/:/0\/8/);}}finally{rmSync(dir,{recursive:true,force:true});}});
