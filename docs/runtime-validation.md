@@ -6,7 +6,15 @@ This checklist is not evidence of a successful inference run. Configuration and 
 
 Use a dedicated Firebase Spark project and Gemini Developer API for a bounded no-billing prototype. Do not repurpose unrelated projects or enable Blaze merely to get started. Obtain the web app's public API key, project ID and app ID, and a registered reCAPTCHA Enterprise site key. These populate the four fields in `.env.example`; the cloud route additionally requires an explicitly selected supported model. A populated configuration is not proof that APIs or attestation work.
 
-Firebase AI Logic setup enables APIs/resources and App Check enforcement. Obtain authorization before those changes. For localhost, official guidance uses a private registered App Check debug token; do not add localhost to production reCAPTCHA allowed domains. No debug-token support is enabled by this branch. Do not put debug tokens in VITE variables, public source, screenshots, logs or exported evidence. For deployed judging, configure a real attestation provider for the exact deployed origin.
+Firebase AI Logic setup enables APIs/resources and App Check enforcement. Obtain authorization before those changes. For localhost, official guidance uses a private registered App Check debug token; do not add localhost to production reCAPTCHA allowed domains. No debug-token support is enabled by this branch. Do not put debug tokens in VITE variables, public source, screenshots, logs or exported evidence. For a production deployment, configure a real attestation provider for the exact deployed origin. The contest rules also accept App Check debug tokens in submissions; this does not make a debug build production-safe or authorize publishing its token.
+
+## Private localhost debug procedure (not enabled here)
+
+After explicit owner authorization, a separate private debug build can set `self.FIREBASE_APPCHECK_DEBUG_TOKEN = true` before `initializeAppCheck`. Keep this out of production source/builds. Seam currently initializes App Check only after its consent gate; preserve that order and never add unconditional startup initialization.
+
+The SDK prints a generated token in browser DevTools. Treat that console as sensitive: disable recording and do not copy its output into shared logs or evidence. Register the token only in the authorized Firebase app's **App Check → Manage debug tokens** screen. Registration permits backend access from an unverified device. The browser retains the token; if exposed, delete its registration immediately. Removing the page variable alone does not revoke it. Do not add localhost to reCAPTCHA allowed domains. [Firebase debug-provider guidance](https://firebase.google.com/docs/app-check/web/debug-provider)
+
+A successful debug run establishes neither production attestation nor real inference. Record the provider mode without the token. [Official contest rules](https://firebasehybridaihackathon.devpost.com/rules) accept debug tokens but still require a working eligible-platform Firebase AI Logic app and judge access. Arrange authorized private testing access; never put a token in public source, a demo video, or a publicly accessible test build. No token has been created, registered, or distributed by this documentation change.
 
 ## Local inference proof
 
