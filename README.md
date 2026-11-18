@@ -57,3 +57,7 @@ A small Seam character now guides **select → compare → confirm → save** wi
 ## Try a real local adapter
 
 The **Demo → your local code** panel asks whether the exact contract fits. Unsure or different contracts do not reveal the adapter setup. For a matching contract, download the runnable test and `seam-adapter.mjs`, replace its deliberate error with a call to your trusted synchronous implementation, then run the displayed `--adapter` command. The scaffold deliberately fails every probe until connected. It is not a supplied fix, an upload, or browser-side validation of your repository. Imported code executes with your local permissions; review it first. Add the command to your existing CI only after reviewing applicability and failures.
+
+## Visual fulfillment replay
+
+The third lab selector opens **Fulfillment replay**. Choose a schedule, run both authored handlers and inspect their actual local effect ledgers. Sequential redelivery records once in both; overlapping calls expose duplicates in the racy implementation. All nine schedules execute, and the JSON download contains the actual results plus limitations. The single-process reference is not a production fix: no shared database, restart recovery, live Stripe calls or real fulfillment is exercised. Source links and CLI reproduction commands remain visible in the scenario.
