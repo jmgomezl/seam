@@ -53,6 +53,7 @@ test('first read names the user, rule and scope without an executed finding',()=
 }));
 
 test('completed demo offers fulfillment-specific handoff with separate other-checks navigation',()=>fixture(async(host,routes)=>{
+ host.cases.find(n=>n.dataset.replayCase==='sequential-redelivery')!.onclick!();
  await host.querySelector('#replay-run')!.listeners.click();
  assert.doesNotMatch(host.html,/Next step for your fulfillment handler/);
  host.querySelector('#first-run-next')!.listeners.click();
@@ -74,11 +75,12 @@ test('guided hierarchy reveals actual counts only after execution and labels cur
  assert.doesNotMatch(host.html,/Actual effect ledgers/);
  assert.match(host.html,/aria-current="step"><b>1/);
  assert.match(host.html,/<summary>More tools<\/summary>/);
+ host.cases.find(n=>n.dataset.replayCase==='sequential-redelivery')!.onclick!();
  await host.querySelector('#replay-run')!.listeners.click();
  assert.match(host.html,/aria-current="step"><b>2/);
  assert.ok(host.html.indexOf('actual effect ledgers')>=0);assert.ok(host.html.indexOf('actual effect ledgers')<host.html.indexOf('Selected schedule finding'));
  host.querySelector('#first-run-next')!.listeners.click();
- assert.match(host.html,/aria-current="step"><b>3/);
+ assert.match(host.html,/aria-current="step"><b>2/);
  assert.match(host.html,/<strong>2<\/strong><span>fulfillment records/);
  assert.match(host.html,/<strong>1<\/strong><span>fulfillment records/);
  assert.match(host.html,/Inspect recorded order IDs/);
@@ -86,6 +88,7 @@ test('guided hierarchy reveals actual counts only after execution and labels cur
 
  test('guided completed run and overlap reveal actual ledgers with schedule context',()=>fixture(async host=>{
  assert.equal(host.querySelector('#replay-results'),null);
+ host.cases.find(n=>n.dataset.replayCase==='sequential-redelivery')!.onclick!();
  await host.querySelector('#replay-run')!.listeners.click();
  assert.equal(host.querySelector('#replay-results')!.focused,true);
  assert.equal(host.querySelector('#replay-results')!.preventScroll,false);
@@ -93,4 +96,43 @@ test('guided hierarchy reveals actual counts only after execution and labels cur
  host.querySelector('#first-run-next')!.listeners.click();
  assert.equal(host.querySelector('#replay-results')!.focused,true);
  assert.equal(host.querySelector('#replay-results')!.preventScroll,false);
+}));
+
+test('guided path keeps next action ahead of optional tools and review downloads',()=>fixture(async host=>{
+ const first=host.html;
+ assert.ok(first.indexOf('See what happens')<first.indexOf('Explore all nine schedules'));
+ assert.match(first,/<details class="replay-review"><summary>Evidence, limits &amp; downloads/);
+ assert.doesNotMatch(first,/<details class="replay-input-review"/);
+ host.cases.find(n=>n.dataset.replayCase==='sequential-redelivery')!.onclick!();
+ await host.querySelector('#replay-run')!.listeners.click();
+ assert.match(host.html,/<details class="replay-input-review" ><summary>Review requests &amp; rerun/);
+ assert.match(host.html,/id="first-run-next" class="primary"/);
+ host.querySelector('#first-run-next')!.listeners.click();
+ assert.ok(host.html.indexOf('Next step for your fulfillment handler')<host.html.indexOf('Explore all nine schedules'));
+ assert.match(host.html,/<summary class="handoff-primary">Test my fulfillment handler locally/);
+ assert.doesNotMatch(host.html,/Save these actual results/);
+ assert.match(host.html,/<details class="handoff-other"><summary>Working on a different boundary/);
+ assert.match(host.html,/Trusted code only, not a sandbox/);
+}));
+
+test('default demo shows the actual concurrent finding and local handoff in one run',()=>fixture(async host=>{
+ assert.equal(host.cases.find(n=>n.pressed)!.dataset.replayCase,'concurrent-same-session');
+ await host.querySelector('#replay-run')!.listeners.click();
+ assert.match(host.html,/Sequential control: 1 race-prone \/ 1 reference records/);
+ assert.match(host.html,/<strong>2<\/strong><span>fulfillment records/);
+ assert.match(host.html,/Test my fulfillment handler locally/);
+ assert.equal(host.querySelector('#first-run-next'),null);
+}));
+
+test('rerun keeps running feedback visible and labels retained results as previous',()=>fixture(async host=>{
+ const first=host.querySelector('#replay-run')!.listeners.click();
+ assert.match(host.html,/Running local replay… No result yet/);
+ await first;
+ const again=host.querySelector('#replay-run')!.listeners.click();
+ assert.match(host.html,/<details class="replay-input-review" open>/);
+ assert.match(host.html,/Results below are from the previous completed run/);
+ assert.match(host.html,/id="replay-run"[^>]*disabled/);
+ await again;
+ assert.doesNotMatch(host.html,/Results below are from the previous completed run/);
+ assert.match(host.html,/All nine schedules:/);
 }));
