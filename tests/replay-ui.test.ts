@@ -1,0 +1,5 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {compareFulfillment,replayEvidence} from '../src/replay-ui.ts';
+test('browser replay comparison executes actual handlers and distinguishes sequential from concurrent duplicates',async()=>{const r=await compareFulfillment();assert.equal(r.original.filter(x=>x.passed).length,7);assert.equal(r.reference.filter(x=>x.passed).length,9);assert.deepEqual(r.original.find(x=>x.id==='sequential-redelivery')?.actual,['cs_demo_a']);assert.deepEqual(r.original.find(x=>x.id==='concurrent-same-session')?.actual,['cs_demo_a','cs_demo_a']);assert.deepEqual(r.reference.find(x=>x.id==='concurrent-same-session')?.actual,['cs_demo_a']);});
+test('replay export contains actual ledgers and honest limitations',async()=>{const run=await compareFulfillment();const e=replayEvidence(run);assert.deepEqual(e.original,run.original);assert.deepEqual(e.reference,run.reference);assert.match(e.scope,/synthetic/);assert.ok(e.limits.some(s=>s.includes('Not live Stripe')));assert.ok(e.limits.some(s=>s.includes('No actual customer')));});

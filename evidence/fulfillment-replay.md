@@ -37,7 +37,7 @@ The bundled example shows the interface; replacing it with another equally autho
 
 Nine fixed input schedules have separately written expected ledgers: one paid request; sequential repeat; two concurrent requests; five concurrent requests; two distinct sessions; unpaid; unpaid then paid; no-payment-required; and replay after a two-session batch. The runner compares actual recorded session IDs with the expected multiset, independent of call completion order. It does not calculate expected behavior using the adapter's deduplication state. Negative controls demonstrate detection of duplicate effects, dropped effects, global instead of per-session deduplication, and fulfillment of unpaid requests.
 
-The deliberately racy adapter records twice for the two-request concurrent fixture and five times for the burst; the single-process reference records once in each. Neither result is an AI inference. This module/CLI is not yet wired into the browser demo.
+The deliberately racy adapter records twice for the two-request concurrent fixture and five times for the burst; the single-process reference records once in each. Neither result is an AI inference. The browser demo now invokes this same module through the Fulfillment replay scenario and exports its actual recorded ledgers.
 
 ## Limits that matter
 
