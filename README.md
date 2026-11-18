@@ -2,12 +2,19 @@
 
 An executable lab for semantic integration mismatches: the same data can mean different things on opposite sides of an API boundary.
 
+## Reproduce the judge demo (no account or AI setup)
+
+After installing dependencies below, run `npm run demo`. It executes both bundled fulfillment handlers, not pre-recorded results: a sequential retry records once, webhook-plus-redirect overlap records twice in the deliberately faulty handler, and the single-process reference records once. The command verifies the expected 7/9 versus 9/9 outcome and exits 0 only if this authored demonstration matches. Exit 0 is **not production readiness**; a mismatch exits 1 and a setup error exits 2.
+
+Run `npm run dev` to explore the same story visually. No Stripe requests, credentials, real fulfillment or Firebase configuration are needed. For trusted local code integration, see [the adapter quickstart](docs/local-handler-quickstart.md). AI proposals are a separate, currently unvalidated integration, not required for this demo.
+
 ## Try it
 
 Use Node 24 (or 22.18+).
 
 ```sh
 npm ci --ignore-scripts
+npm run demo
 npm test
 npm run typecheck
 npm run build
@@ -22,7 +29,7 @@ All examples are public-source or synthetic. The deterministic lab makes no infe
 
 ## Evidence and limitations
 
-Current validation: 81 automated tests and production build pass. Evidence logs and per-milestone scope are in `evidence/`. Browser reports cover their named checkpoints, not all future changes.
+Run `npm test` and `npm run build` for current validation; the test count changes as coverage grows. Evidence logs and per-milestone scope are in `evidence/`. Browser reports cover their named checkpoints, not all future changes.
 
 This code was reconstructed on 2026-11-17 and then extended. Original earlier experiment bytes were not recovered; transcribed historical figures are labeled as such and are not a reproduced benchmark. See [history](HISTORY.md).
 
