@@ -106,3 +106,24 @@ Browser check with Firebase unconfigured: extraction and Stop waiting disabled;
 manual continuation enabled and navigated to the actual local boundary form
 without consent or inference. Pending-response behavior was tested with mocks,
 not live Firebase.
+
+## Legacy Runtime view lifecycle
+
+The separate AI Runtime review controls now bind to their own view and a cloned
+synthetic boundary snapshot, not global element IDs after an await. Late success
+or failure cannot overwrite a detached/replaced Runtime view. Changing either
+consent checkbox discards pending output, without claiming cancellation or data
+recall. Cloud approval is consumed for one request as before.
+
+Both Runtime inference buttons stay disabled while one Runtime review is pending,
+including navigation away and back. A new Runtime view may refresh its own button
+availability when that shared request settles, but never receives the old result.
+This is a Runtime-view guard, not a global cancellation mechanism or a claim that
+all AI entry points share one queue. No retry, fallback or SDK configuration was
+added. Availability checks also ignore stale views and reject repeated clicks
+while the same check is pending; they do not initialize a model.
+
+Verification: mocked async tests cover detached/replaced views, late success and
+rejection, double clicks across local/cloud buttons, navigation back, retry after
+settlement, source snapshots, consent edits and stale availability checks. These
+are lifecycle tests, not live inference or App Check validation.
