@@ -76,3 +76,33 @@ SDK Schema helper construction, strict typecheck, and regression suite. No live
 Firebase/App Check or schema-constrained model response is claimed. Actual runtime
 compatibility remains to be tested after authorized project configuration; no
 model version is inferred from these tests.
+
+## Slow requests: stop waiting and manual continuation
+
+The proposal view offers **Stop waiting** while a request is pending. It discards
+that request's result and clears confirmation/export state. It does not cancel
+SDK inference, model downloads or already-sent cloud data. Late success and
+failure cannot replace the stopped view or a subsequent view.
+
+Only one proposal request may remain in flight per page lifetime, including
+navigation away and back. Stopping does not unlock another inference; extraction
+becomes available only after that request settles. This deliberately avoids
+stacking slow model calls. No automatic retry or cloud fallback is introduced.
+If the SDK never settles, extraction remains blocked on that page; manual work
+is still available. A page reload is not represented as guaranteed cancellation.
+
+**Continue manually · no AI** opens the existing browser-local boundary form,
+even before consent or when Firebase is unconfigured. Any earlier manual draft remains in that flow; source excerpts and inferred
+declarations are not silently copied, saved or exported. The navigation may discard unsaved proposal inputs, as stated beside
+the control. The manual flow is declaration arithmetic, not model output or
+production adapter verification.
+
+Regression tests exercise double clicks, stop followed by late success/rejection,
+retry after settlement, navigation back while pending, detached/replaced views,
+and manual fallback before any request. Transport in these tests is explicitly
+mocked; these results do not establish live model latency or cancellation.
+
+Browser check with Firebase unconfigured: extraction and Stop waiting disabled;
+manual continuation enabled and navigated to the actual local boundary form
+without consent or inference. Pending-response behavior was tested with mocks,
+not live Firebase.
