@@ -90,3 +90,7 @@ A fresh page now starts with one concrete developer-review question: can repeate
 Run `node --experimental-strip-types scripts/check-fulfillment.mjs --help` or follow [the local handler quickstart](docs/local-handler-quickstart.md). It explains how to inject fake storage/effects into your actual decision logic, run the CLI/report, interpret exit codes and use a negative control. An existing report now produces actionable guidance without overwriting it; the message explicitly notes that the replay already ran.
 
 Handler replay bounds asynchronous waiting to 5 seconds per fixture. A timeout fails the run and labels later fixtures `not-run`; metadata reports retain those statuses. It does not cancel adapter work or replace a CI process timeout. See the [local handler quickstart](docs/local-handler-quickstart.md#a-handler-that-never-finishes).
+
+### From a reviewed proposal to your formatter
+
+After a supported AI proposal is independently reviewed, the optional local adapter path now downloads both the runner and a deliberately unconnected scaffold. Follow the [formatter quickstart](docs/reviewed-formatter-quickstart.md) to wire your actual trusted synchronous code, run from the correct folder and interpret/save the scoped result. This does not establish live Firebase inference or sandbox imported code.

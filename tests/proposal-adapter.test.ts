@@ -1,3 +1,4 @@
+import {adapterTemplate} from '../src/developer-handoff.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync,writeFileSync,rmSync} from 'node:fs';
@@ -13,6 +14,7 @@ test('export actually executes required trusted external adapters and emits scop
  const run=(args:string[])=>spawnSync(process.execPath,[runner,...args],{encoding:'utf8',timeout:5000});
  assert.equal(run([]).status,2);assert.equal(run(['--fixed']).status,2);
  for(const [name,scale,exit] of [['correct',100,0],['wrong',1,1]] as const){const adapter=join(dir,name+'.mjs');writeFileSync(adapter,`export function formatAmount(n){return (n/${scale}).toFixed(2);}`);const result=run(['--adapter',adapter]);assert.equal(result.status,exit,result.stderr);const report=JSON.parse(result.stdout);assert.equal(report.results.length,4);assert.equal(report.results[0].expected,10);assert.equal(report.results[0].observed,1000/scale);assert.doesNotMatch(result.stdout,new RegExp(dir));assert.ok(report.limits.includes('Editable report, not a signed proof of execution'));}
+ const scaffold=join(dir,'trusted-adapter.mjs');writeFileSync(scaffold,adapterTemplate('money'));const unconnected=run(['--adapter',scaffold]);assert.equal(unconnected.status,1);assert.ok(JSON.parse(unconnected.stdout).results.every((r:any)=>r.error&&!r.passed));
  const bad=join(dir,'throw.mjs');writeFileSync(bad,"export function formatAmount(){throw new Error('secret-error-text')}");const result=run(['--adapter',bad]);assert.equal(result.status,1);assert.doesNotMatch(result.stdout,/secret-error-text/);assert.ok(JSON.parse(result.stdout).results.every((r:any)=>r.error&&!r.passed));
  for(const body of ["export default async function(){throw new Error('private-async-error')}","export default ()=>new Promise((_,reject)=>setTimeout(()=>reject(new Error('private-async-error')),5))", "export default ()=>({then(resolve,reject){reject(new Error('private-async-error'))}})"]){writeFileSync(bad,body);const asyncResult=run(['--adapter',bad]);assert.equal(asyncResult.status,1);assert.equal(asyncResult.stderr,'');assert.doesNotMatch(asyncResult.stdout,/private-async-error/);assert.ok(JSON.parse(asyncResult.stdout).results.every((r:any)=>r.error&&!r.passed));}
  writeFileSync(bad,'export const unrelated=1');assert.equal(run(['--adapter',bad]).status,2);
