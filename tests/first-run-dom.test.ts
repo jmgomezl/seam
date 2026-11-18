@@ -26,10 +26,10 @@ class HostDouble {
  querySelector(selector:string){if(selector==='[data-replay-case][aria-pressed="true"]')return this.cases.find(n=>n.pressed);return this.nodes.get(selector)??null;}
  querySelectorAll(selector:string){if(selector==='[data-nav]')return this.nav;if(selector==='[data-replay-case]')return this.cases;return [];}
 }
-function fixture(run:(host:HostDouble,routes:string[])=>void){
+function fixture(run:(host:HostDouble,routes:string[])=>unknown){
  const prior=Object.getOwnPropertyDescriptor(globalThis,'document');const host=new HostDouble(),routes:string[]=[];
  Object.defineProperty(globalThis,'document',{configurable:true,value:{createElement:()=>host}});
- try{replayView({replaceChildren(){},contains:()=>true} as unknown as HTMLElement,r=>routes.push(r),true);run(host,routes);}finally{if(prior)Object.defineProperty(globalThis,'document',prior);else Reflect.deleteProperty(globalThis,'document');}
+ try{replayView({replaceChildren(){},contains:()=>true} as unknown as HTMLElement,r=>routes.push(r),true);return run(host,routes);}finally{if(prior)Object.defineProperty(globalThis,'document',prior);else Reflect.deleteProperty(globalThis,'document');}
 }
 test('first-run AI proposal control routes to implemented proposals view',()=>fixture((host,routes)=>{
  const button=host.nav.find(n=>n.dataset.nav==='proposals');assert.ok(button);button.onclick!();assert.deepEqual(routes,['proposals']);
@@ -41,4 +41,23 @@ test('guided schedule selection preserves open disclosure and visible keyboard f
  assert.equal(host.querySelector('.first-run-all')!.open,true);
  const selected=host.querySelector('[data-replay-case][aria-pressed="true"]')!;assert.equal(selected.dataset.replayCase,'five-call-burst');assert.equal(selected.focused,true);
  host.cases.find(n=>n.dataset.replayCase==='unpaid-does-not-fulfill')!.onclick!();assert.equal(host.querySelector('.first-run-all')!.open,true);assert.equal(host.querySelector('[data-replay-case][aria-pressed="true"]')!.focused,true);
+}));
+
+test('first read names the user, rule and scope without an executed finding',()=>fixture(host=>{
+ assert.match(host.html,/FOR DEVELOPERS CONNECTING SYSTEMS/);
+ assert.match(host.html,/The rule: fulfill each paid order once/);
+ assert.match(host.html,/Does it fulfill twice/);
+ assert.match(host.html,/See what happens/);
+ assert.match(host.html,/No API requests, shipments or payments/);
+ assert.doesNotMatch(host.html,/Next step for your code/);
+}));
+
+test('completed demo hands off to the existing scoped local lab and home stays reachable',()=>fixture(async(host,routes)=>{
+ await host.querySelector('#replay-run')!.listeners.click();
+ assert.match(host.html,/Next step for your code/);
+ assert.match(host.html,/bundled examples, not your integration/);
+ assert.match(host.html,/trusted local formatter or JSON-patch adapter/);
+ const local=host.nav.filter(n=>n.dataset.nav==='lab').at(-1)!;local.onclick!();
+ const home=host.nav.find(n=>n.dataset.nav==='start')!;home.onclick!();
+ assert.deepEqual(routes,['lab','start']);
 }));
