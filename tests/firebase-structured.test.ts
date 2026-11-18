@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {build} from 'esbuild';
 import {Schema} from 'firebase/ai';
-import {proposalResponseSchema} from '../src/proposal-schema.ts';
+import {proposalResponseSchema,localProposalResponseSchema} from '../src/proposal-schema.ts';
 import {parseProposal} from '../src/proposal.ts';
 const env={VITE_FIREBASE_API_KEY:'synthetic',VITE_FIREBASE_PROJECT_ID:'synthetic',VITE_FIREBASE_APP_ID:'synthetic',VITE_RECAPTCHA_SITE_KEY:'synthetic',VITE_FIREBASE_MODEL:'explicit-test-model'};
 let serial=0;
@@ -23,10 +23,12 @@ async function adapter(config:Record<string,string>=env){
 test('actual adapter gives only selected strict route its proposal schema',async()=>{
  const {state,infer}=await adapter();
  await infer('synthetic public text','local',true,false,'proposal');
- const local=state.configs[0];assert.equal(local.mode,'local-only');assert.equal(local.inCloudParams,undefined);assert.ok(local.onDeviceParams.promptOptions.responseConstraint instanceof Schema);assert.equal(state.initialized,1);
+ const local=state.configs[0];assert.equal(local.mode,'local-only');assert.equal(local.inCloudParams,undefined);assert.deepEqual(local.onDeviceParams.promptOptions.responseConstraint,localProposalResponseSchema(Schema));assert.equal(state.initialized,1);
  state.source='in_cloud';await infer('synthetic public text','cloud',true,true,'proposal');
  const cloud=state.configs[1];assert.equal(cloud.mode,'cloud-only');assert.equal(cloud.onDeviceParams,undefined);assert.equal(cloud.inCloudParams.model,'explicit-test-model');assert.equal(cloud.inCloudParams.generationConfig.responseMimeType,'application/json');
- assert.deepEqual(JSON.parse(JSON.stringify(local.onDeviceParams.promptOptions.responseConstraint)),JSON.parse(JSON.stringify(cloud.inCloudParams.generationConfig.responseSchema)));
+ assert.ok(cloud.inCloudParams.generationConfig.responseSchema instanceof Schema);
+ assert.deepEqual(local.onDeviceParams.promptOptions.responseConstraint.properties.producer.type,['object','null']);
+ assert.equal(cloud.inCloudParams.generationConfig.responseSchema.properties.producer.nullable,true);
  assert.equal(state.initialized,1);assert.equal(state.prompts.length,2);
  // Legacy boundary-review format remains unchanged.
  await infer('legacy prompt','cloud',true,true);assert.equal(state.configs[2].inCloudParams.generationConfig,undefined);
@@ -64,4 +66,15 @@ test('SDK schema permits abstention and does not replace quote or scale validati
  const invalid={status:'candidate',producer:{unitsPerMajor:2,currency:'USD',quote:input.producer},consumer:{unitsPerMajor:1,currency:'USD',quote:input.consumer},reason:'Schema-shaped is not supported semantics.'};
  assert.throws(()=>parseProposal(JSON.stringify(invalid),input));
  invalid.producer.unitsPerMajor=100;invalid.producer.quote='Invented supporting quotation';assert.throws(()=>parseProposal(JSON.stringify(invalid),input));
+});
+test('local schema translates both nullable sides without changing cloud schema',()=>{
+ const local:any=localProposalResponseSchema(Schema),cloud=JSON.parse(JSON.stringify(proposalResponseSchema(Schema)));
+ for(const side of ['producer','consumer']){
+  assert.deepEqual(local.properties[side].type,['object','null']);
+  assert.deepEqual(local.properties[side].required,cloud.properties[side].required);
+  assert.equal(local.properties[side].properties.quote.type,'string');
+  assert.equal(cloud.properties[side].nullable,true);
+ }
+ assert.ok(!JSON.stringify(local).includes('nullable'));
+ assert.deepEqual(local.required,cloud.required);assert.deepEqual(local.properties.status.enum,cloud.properties.status.enum);
 });

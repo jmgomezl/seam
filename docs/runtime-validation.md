@@ -63,7 +63,10 @@ The legacy boundary-review format is unchanged. SDK imports and schema setup
 remain after consent and configuration checks. Schema errors fail closed without
 retrying unconstrained or falling back to another route.
 
-The schema includes candidate/abstain status and nullable side declarations, so
+The schemas include candidate/abstain status and nullable side declarations.
+Local uses standard JSON Schema null unions; cloud retains the SDK helper nullable
+representation. See [direct Chrome observations](direct-chrome-schema-observation.md)
+for the compatibility difference found in real synthetic-only inference. Thus
 missing evidence can still abstain. Supported scale values, exact quotes, source
 binding and human semantic confirmation are application checks, not guarantees
 from the schema. A schema-shaped response can still be factually wrong.
